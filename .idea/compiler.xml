@@ -6,14 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="PageRank" />
+        <module name="SparkPageRank" />
         <module name="CephProject" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="CephProject" target="1.5" />
+      <module name="HadoopPageRank" target="1.5" />
       <module name="PageRank" target="1.5" />
       <module name="Projects" target="1.5" />
+      <module name="SparkPageRank" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
