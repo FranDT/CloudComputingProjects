@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CephProject/CephProject.iml" filepath="$PROJECT_DIR$/CephProject/CephProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PageRank/PageRank.iml" filepath="$PROJECT_DIR$/PageRank/PageRank.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Projects.iml" filepath="$PROJECT_DIR$/.idea/Projects.iml" />
+    </modules>
+  </component>
+</project>
