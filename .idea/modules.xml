@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CephProject/CephProject.iml" filepath="$PROJECT_DIR$/CephProject/CephProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/PageRank/HadoopPageRank/HadoopPageRank.iml" filepath="$PROJECT_DIR$/PageRank/HadoopPageRank/HadoopPageRank.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PageRank/PageRank.iml" filepath="$PROJECT_DIR$/PageRank/PageRank.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Projects.iml" filepath="$PROJECT_DIR$/.idea/Projects.iml" />
       <module fileurl="file://$PROJECT_DIR$/PageRank/SparkPageRank/SparkPageRank.iml" filepath="$PROJECT_DIR$/PageRank/SparkPageRank/SparkPageRank.iml" />
     </modules>

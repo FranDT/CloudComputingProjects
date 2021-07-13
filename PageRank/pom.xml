@@ -10,6 +10,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>PageRank</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>HadoopPageRank</module>
+        <module>SparkPageRank</module>
+    </modules>
 
 
 </project>
