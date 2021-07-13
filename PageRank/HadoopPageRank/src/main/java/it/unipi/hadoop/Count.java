@@ -35,7 +35,7 @@ public class Count {
 
         /**
          *
-         * In this map phase, we just increase the value of count for each row,
+         *
          *
          * @param key
          * @param value
