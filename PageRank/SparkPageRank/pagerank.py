@@ -1,5 +1,5 @@
 from pyspark import SparkContext
-
+import sys
 
 def createAdjElement(line):
     start = "<title>"
@@ -14,7 +14,7 @@ def createAdjElement(line):
         part = parts[i]
         value = part[0:part.find(linkEndDelim)]
         links.append(value)
-
+    links = list(dict.fromkeys(links))
     return (key, links)
 
 
@@ -26,39 +26,50 @@ def mainMap(record):
         returnedList.append((outlink, record[2]/outlinks))
     return returnedList
 
-master = "local[*]"
-appName = "PageRank"
-maxIter = 3
 
-sc = SparkContext(master, appName)
+if __name__ == "__main__":
 
-rdd = sc.textFile("/home/ahmed/Desktop/input.txt")
-mapped = rdd.map(createAdjElement)
+    if len(sys.argv) != 5:
+        print("Please use the following syntax: pagerank.py <inputSource> <outputLocation> <alpha> <#iterations>")
+        sys.exit(-1)
+        
+    inputFile = sys.argv[1]
+    outputFile = sys.argv[2]
+    alpha = float(sys.argv[3])
+    maxIter = int(sys.argv[4])
+    
+    master = "local[*]"
+    appName = "PageRank"
+    
+    sc = SparkContext(master, appName)
 
-toBeCounted1 = mapped.flatMap(lambda rec: rec[1])
-toBeCounted2 = mapped.flatMap(lambda rec: rec[0])
+    #Process input source into an RDD
+    rdd = sc.textFile(inputFile)
 
-toBeCounted = toBeCounted1.union(toBeCounted2)
+    #Create Adjacency list as a map
+    mapped = rdd.map(createAdjElement)
 
-N = toBeCounted.distinct().count()
+    #Count the number of distinct nodes in the graph
+    pages = mapped.map(lambda rec: rec[0]).distinct().count()
+    outlinks = mapped.flatMap(lambda rec: rec[1]).distinct().count()
+    N = pages + outlinks
+    
+    #Append the initial page rank to the adjacency list
+    pageRanks = mapped.map(lambda rec: (rec[0], rec[1], 1/N))
 
-pageRanks = mapped.map(lambda rec: (rec[0], rec[1], 1/N))
-flattenedContributions = pageRanks.flatMap(lambda rec: mainMap(rec))
-y = flattenedContributions.keys().distinct().count()
-print(N)
-print(y)
-
-summedContributions = flattenedContributions.reduceByKey(lambda x, y: x + y)
-pageRanks = summedContributions.mapValues(lambda s: (float(1 - 0.8) / N) +(0.8 * float(s)))
-
-for i in range (1, maxIter-1):
-    joined = mapped.join(pageRanks)
-    pageRanks = joined.map(lambda rec: (rec[0], rec[1][0], rec[1][1]))
+    #Perform the initial MapReduce to compute the ranks
     flattenedContributions = pageRanks.flatMap(lambda rec: mainMap(rec))
     summedContributions = flattenedContributions.reduceByKey(lambda x, y: x + y)
-    pageRanks = summedContributions.mapValues(lambda s: (float(1 - 0.8) / N) +(0.8 * float(s)))
+    pageRanks = summedContributions.mapValues(lambda s: (float(1 - alpha) / N) +(alpha * float(s)))
 
-sorted_page_ranks = pageRanks.sortBy(lambda page: page[1])
-y = sorted_page_ranks.min()
+    #Further MapReduce iterations
+    for i in range (1, maxIter-1):
+        joined = mapped.join(pageRanks)
+        pageRanks = joined.map(lambda rec: (rec[0], rec[1][0], rec[1][1]))
+        flattenedContributions = pageRanks.flatMap(lambda rec: mainMap(rec))
+        summedContributions = flattenedContributions.reduceByKey(lambda x, y: x + y)
+        pageRanks = summedContributions.mapValues(lambda s: (float(1 - alpha) / N) +(alpha * float(s)))
 
-print(y)
+    sorted_page_ranks = pageRanks.sortBy(lambda page: page[1], ascending=False, numPartitions=1)
+
+    sorted_page_ranks.saveAsTextFile(outputFile)
