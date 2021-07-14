@@ -1,5 +1,6 @@
 package it.unipi.hadoop;
 
+import it.unipi.hadoop.parser.Parser;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -16,6 +17,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.*;
 
 public class Count {
     private static Count singleton = null;
@@ -28,14 +30,17 @@ public class Count {
     }
 
     public static class CountMapper extends Mapper<Object, Text, Text, IntWritable> {
-        private final static IntWritable res = new IntWritable();
-        private final static Text keyEmit = new Text("Pages");
+        private final static IntWritable one = new IntWritable(1);
+        private static Text keyEmit = new Text();
+        private static Parser parser = new Parser();
 
-        private static int count = 0;
+        private static String title;
+        private static List<String> outlinks;
 
         /**
          *
-         *
+         * In this map phase, we parse line by line the title and the outlinks connected to that page, emitting both
+         * (title, 1) and (outlink, 1) for all the outlinks in the list, similarly to what we do for WordCount.
          *
          * @param key
          * @param value
@@ -44,12 +49,20 @@ public class Count {
          * @throws InterruptedException
          */
         public void map(final Object key, final Text value, final Context context) throws IOException, InterruptedException {
-            count++;
-        }
+            title = parser.getTitle(value.toString());
+            outlinks = parser.getOulinks(value.toString());
 
-        public void cleanup(Context context) throws IOException, InterruptedException {
-            res.set(count);
-            context.write(keyEmit, res);
+            if(title != null) {
+                keyEmit.set(title);
+                context.write(keyEmit, one);
+
+                if (outlinks != null) {
+                    for (String s : outlinks) {
+                        keyEmit.set(s);
+                        context.write(keyEmit, one);
+                    }
+                }
+            }
         }
     }
 
@@ -59,9 +72,33 @@ public class Count {
 
         private static long count = 0;
 
+        /**
+         *
+         * In the reduce phase, we get for each title the list of ones that are emitted in the map phase and we increment
+         * a static variable count that counts each different page. In this way, we increment count each time we receive a
+         * page, even if it is a page that is not in the main list but is just found in the outlinks of another page.
+         *
+         * @param key
+         * @param values
+         * @param context
+         * @throws IOException
+         * @throws InterruptedException
+         */
         public void reduce(final Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException{
-            for(final IntWritable val : values)
-                count += val.get();
+            count++;
+        }
+
+        /**
+         *
+         * The cleanup method is called just once at the end of the reducer processing phase and it is used to emit the
+         * final value of count we've found, that corresponds to the number of pages inside the starting file. The cleanup
+         * method emits a standard text value and the number of pages.
+         *
+         * @param context
+         * @throws IOException
+         * @throws InterruptedException
+         */
+        public void cleanup(Context context) throws IOException, InterruptedException {
             pages.set(count);
             context.write(keyEmit, pages);
         }
@@ -69,6 +106,10 @@ public class Count {
 
     public boolean run(final String input, final String outputDir) throws Exception {
         final Configuration conf = new Configuration();
+
+        /*
+            Sets the character that separates the key and the value emitted by the reducer, in this case "-"
+         */
         conf.set("mapreduce.output.textoutputformat.separator", "-");
         final Job job = Job.getInstance(conf, "count");
 
@@ -87,11 +128,11 @@ public class Count {
     }
 
     public int getPageNumber(final String input, final String outputDir) throws Exception{
-        if(!Count.getCount().run(input, outputDir))
+        if(!Count.getCount().run(input, outputDir + "/count"))
             return -1;
 
         //Locates the file in HDFS and retrieves the value of N
-        final String filePath = outputDir + "/part-r-0000";
+        final String filePath = outputDir + "/count/part-r-0000";
         Configuration conf = new Configuration();
         FileSystem fs = FileSystem.get(conf);
         Path hdfsPath = new Path(filePath);

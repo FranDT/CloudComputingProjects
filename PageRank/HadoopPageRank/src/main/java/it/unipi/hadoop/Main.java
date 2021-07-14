@@ -22,7 +22,8 @@ public class Main {
 
         /**
          *
-         * Count phase: in this phase, we count how many pages are present in the file saved in the INPUT_PATH variable.
+         * Count phase: in this phase, we count how many pages are present in the file saved in the INPUT_PATH variable,
+         * not only considering the one specified line by line but also the ones that are only specified as outlinks.
          * The value is saved inside HDFS after the first computation and will be retrieved only once from the Main.
          * In particular, we call the function getPageNumber() that will start the MapReduce-based count, instantiating the
          * singleton for the Count class.
@@ -54,5 +55,39 @@ public class Main {
         final Timestamp afterParse = new Timestamp(System.currentTimeMillis());
         System.out.println("Parse and node creation phase ended after " + ((afterParse.getTime() - afterCount.getTime())/1000) + " seconds");
 
+        /**
+         *
+         * Ranking phase: this is an iterative phase that is performed each time on a set of nodes with ranks that have
+         * been updated in the previous iteration. Each time is therefore necessary to get the corresponding set, on which
+         * we will perform our MapReduce stage. The iteration goes on for as many iterations as specified by the user via
+         * command line. The first set of nodes is given by the parse phase.
+         *
+         */
+        String nextIterationSet = OUTPUTS_PATH + "/parse";
+        for(int i = 0; i < NUM_ITER; i++){
+            if(!Rank.getRank().run(nextIterationSet, OUTPUTS_PATH, ALPHA, pageNumber, i)){
+                System.out.println("An error occurred during the execution of the ranking phase");
+                System.exit(1);
+            }
+            nextIterationSet = OUTPUTS_PATH + "rank-" + i;
+        }
+
+        final Timestamp afterRank = new Timestamp(System.currentTimeMillis());
+        System.out.println("Parse and node creation phase ended after " + ((afterRank.getTime() - afterParse.getTime())/1000) + " seconds");
+
+        /**
+         *
+         * Sort phase: in this phase, we take the result of the last iteration of the previous phase and we sort it to
+         * obtain the final result of our PageRank algorithm.
+         *
+         */
+        if(!Sort.getSort().run(nextIterationSet, OUTPUTS_PATH)){
+            System.out.println("An error occurred during the execution of the sorting phase");
+            System.exit(1);
+        }
+
+        final Timestamp afterSort = new Timestamp(System.currentTimeMillis());
+        System.out.println("Parse and node creation phase ended after " + ((afterSort.getTime() - afterParse.getTime())/1000) + " seconds");
+        System.out.println("Total completion time: " + ((afterSort.getTime() - startingTime.getTime())/1000) + " seconds");
     }
 }

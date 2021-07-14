@@ -1,5 +1,6 @@
-package it.unipi.hadoop.pojo;
+package it.unipi.hadoop.hadoopobjects;
 
+import com.google.gson.Gson;
 import org.apache.hadoop.io.Writable;
 
 import java.io.DataInput;
@@ -7,17 +8,21 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ *
+ * Node implements the Writable interface, that implements serialization and deserialization of data between map and reduce
+ * phases.
+ *
+ */
 public class Node implements Writable {
     private double pageRank;
     private List<String> outlinks;
+    private boolean isNode;
 
     public Node(){
-        pageRank = 0;
+        setPageRank(0);
         setAdjacencyList(new LinkedList<String>());
-    }
-
-    public Node(final double pageRank, final List<String> outlinks){
-        set(pageRank, outlinks);
+        setIsNode(false);
     }
 
     public void setPageRank(final double pageRank){
@@ -28,14 +33,18 @@ public class Node implements Writable {
         this.outlinks = outlinks;
     }
 
-    public void set(final double pageRank, final List<String> outlinks){
+    public void setIsNode(final boolean value) { this.isNode = value; }
+
+    public void set(final double pageRank, final List<String> outlinks, final boolean isNode){
         setPageRank(pageRank);
         setAdjacencyList(outlinks);
+        setIsNode(isNode);
     }
 
     public void set(final Node node){
         setPageRank(node.getPageRank());
         setAdjacencyList(node.getAdjacencyList());
+        setIsNode(node.getIsNode());
     }
 
     public double getPageRank(){
@@ -45,6 +54,8 @@ public class Node implements Writable {
     public List<String> getAdjacencyList(){
         return outlinks;
     }
+
+    public boolean getIsNode() { return isNode; }
 
     //Method to be implemented from Writable interface
 
@@ -56,6 +67,7 @@ public class Node implements Writable {
         for(String outNode : outlinks){
             out.writeUTF(outNode);
         }
+        out.writeBoolean(isNode);
     }
 
     public void readFields(DataInput in) throws IOException {
@@ -67,5 +79,25 @@ public class Node implements Writable {
             outlinks.add(in.readUTF());
             listSize--;
         }
+
+        isNode = in.readBoolean();
+    }
+
+    /**
+     *
+     * The toString() method is customized for this class for ease of data retrieval from file: in fact, in the rank mapper
+     * we need to read the nodes from a file, having the Text format: to obtain and build the Node object, we can convert
+     * the file into a Json string and parse it easily with the Json utilities.
+     *
+     * @return
+     */
+    @Override
+    public String toString(){
+        return new Gson().toJson(this);
+    }
+
+    public void setByJson(final String json){
+        Node target = new Gson().fromJson(json, Node.class);
+        set(target.getPageRank(), target.getAdjacencyList(), target.getIsNode());
     }
 }

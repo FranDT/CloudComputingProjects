@@ -2,7 +2,7 @@ package it.unipi.hadoop;
 
 
 import it.unipi.hadoop.parser.Parser;
-import it.unipi.hadoop.pojo.Node;
+import it.unipi.hadoop.hadoopobjects.Node;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -37,8 +37,8 @@ public class Parse {
 
         /**
          *
-         * During this map operation, we need to consider that there may be some pages that don't have outlinks and are
-         * not listed in the file, but only in the outlinks section. For this reason, for each line we will have to emit
+         * During this map operation, we need to consider that there may be some pages that don't have outlinks or that are
+         * not listed in the file but only in the outlinks section. For this reason, for each line we will have to emit
          * both the title of the page and its outlinks and then the outlinks with an empty string as value. The final else
          * in the map phase is used instead for the nodes that do not have any outlinks.
          *
@@ -71,9 +71,11 @@ public class Parse {
 
     public static class ParseReducer extends Reducer<Text, Text, Text, Node> {
 
-        private static Node valueEmit;
+        private static final Node valueEmit = new Node();
 
         private static int pageNumber;
+        private static List<String> outlinks;
+        private static double rank;
 
 
         /**
@@ -87,7 +89,7 @@ public class Parse {
          * @throws IOException
          * @throws InterruptedException
          */
-        public void setup(Context context) {
+        public void setup(Context context) throws IOException, InterruptedException {
             pageNumber = context.getConfiguration().getInt("page.number", 0);
         }
 
@@ -103,33 +105,49 @@ public class Parse {
          * @throws InterruptedException
          */
         public void reduce(final Text key, final Iterable<Text> value, Context context) throws IOException, InterruptedException{
-            List<String> outlinks = new LinkedList<String>();
+            outlinks = new LinkedList<String>();
             for(Text link : value){
                 if(!link.equals("")){
                     outlinks.add(link.toString());
                 }
             }
-            double rank = 1/pageNumber;
-            valueEmit = new Node(rank, outlinks);
+            rank = 1/pageNumber;
+            valueEmit.set(rank, outlinks, true);
 
             context.write(key, valueEmit);
         }
     }
 
-    public static boolean run(final String input, final String output, final int pageNumber) throws Exception {
+    public static boolean run(final String input, final String outputDir, final int pageNumber) throws Exception {
         final Configuration conf = new Configuration();
         final Job job = Job.getInstance(conf, "parse");
+
+        /*
+            In this case, we can't use "-" as separator since the title of the page or one of the outlinks may contain
+            that character, therefore we use the \t as separator for the output.
+         */
         conf.set("mapreduce.output.textoutputformat.separator", "\t");
 
         job.setJarByClass(Parse.class);
 
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Node.class);
+
         job.setMapperClass(ParseMapper.class);
         job.setReducerClass(ParseReducer.class);
 
+        /*
+            Used to pass parameters through the Configuration object and the Context object.
+         */
         job.getConfiguration().setInt("page.number", pageNumber);
 
+        /*
+            Sets the number of reducers to be used for the MapReduce job.
+         */
+        job.setNumReduceTasks(5);
+
         FileInputFormat.addInputPath(job, new Path(input));
-        FileOutputFormat.setOutputPath(job, new Path(output));
+        FileOutputFormat.setOutputPath(job, new Path(outputDir + "/parse"));
 
         return job.waitForCompletion(true);
     }
