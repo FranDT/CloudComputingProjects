@@ -111,7 +111,7 @@ public class Parse {
                     outlinks.add(link.toString());
                 }
             }
-            rank = 1/pageNumber;
+            rank = 1.0/pageNumber;
             valueEmit.set(rank, outlinks, true);
 
             context.write(key, valueEmit);

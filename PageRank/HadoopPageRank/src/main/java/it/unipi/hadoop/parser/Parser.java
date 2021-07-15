@@ -1,5 +1,7 @@
 package it.unipi.hadoop.parser;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,16 +21,25 @@ public class Parser {
         return null;
     }
 
-    public List<String> getOulinks(String inputString){
-        List<String> outlinks = new LinkedList<String>();
+    public List<String> getOulinks(final String fileToSearch) {
+        Set<String> outlinks = new HashSet<String>();
 
-        Pattern pattern = Pattern.compile("\\[\\[(.*?)]]");
-        this.matcher = pattern.matcher(inputString);
-
-        while(matcher.find()){
-            outlinks.add(matcher.group(1).replace("\t", ""));
+        try {
+            String line;
+            String[] arr;
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(fileToSearch));
+            while ((line = bufferedReader.readLine()) != null) {
+                arr = line.split("\\[\\[");
+                for (int i = 0; i < arr.length; i++) {
+                    if (arr[i].contains("]]")) {
+                        outlinks.add(arr[i].substring(0, arr[i].indexOf("]]") - 1));
+                    }
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
         }
 
-        return outlinks;
+        return new LinkedList<String>(outlinks);
     }
 }
