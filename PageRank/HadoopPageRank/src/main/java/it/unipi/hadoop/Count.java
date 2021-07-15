@@ -140,7 +140,6 @@ public class Count {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
         String[] values = reader.readLine().trim().split("-");
-        fs.close();
         inputStream.close();
         reader.close();
 
