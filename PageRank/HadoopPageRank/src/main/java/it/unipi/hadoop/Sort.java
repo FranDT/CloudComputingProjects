@@ -25,7 +25,7 @@ public class Sort {
         return singleton;
     }
 
-    public static class SortMapper extends Mapper<Text, Text, Page,Text>{
+    public static class SortMapper extends Mapper<Object, Text, Page,Text>{
         private static final Page keyEmit = new Page();
         private static final Node node = new Node();
         private static final Text valueEmit = new Text("");
@@ -43,7 +43,7 @@ public class Sort {
          * @throws IOException
          * @throws InterruptedException
          */
-        public void map(final Text key, final Text value, Context context) throws IOException, InterruptedException{
+        public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             node.setByJson(value.toString());
             keyEmit.set(key.toString(), node.getPageRank());
             context.write(keyEmit, valueEmit);
