@@ -130,6 +130,9 @@ public class Parse {
 
         job.setJarByClass(Parse.class);
 
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
+
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Node.class);
 

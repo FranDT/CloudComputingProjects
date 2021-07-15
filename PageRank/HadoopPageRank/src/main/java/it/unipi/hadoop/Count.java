@@ -115,8 +115,11 @@ public class Count {
 
         job.setJarByClass(Count.class);
 
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(IntWritable.class);
+
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(LongWritable.class);
 
         job.setMapperClass(CountMapper.class);
         job.setReducerClass(CountReducer.class);

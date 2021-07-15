@@ -81,6 +81,9 @@ public class Sort {
         job.setMapperClass(SortMapper.class);
         job.setReducerClass(SortReducer.class);
 
+        job.setMapOutputKeyClass(Page.class);
+        job.setMapOutputValueClass(Text.class);
+
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
 
