@@ -6,17 +6,17 @@ import java.sql.Timestamp;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        if(args.length != 2){
-            System.out.println("Error: wrong number of arguments. Please insert in order the number of iterations\n" +
-                    "and the value for alpha");
+        if(args.length != 4){
+            System.out.println("Error: wrong number of arguments. Please insert in order the path of the input file,\n" +
+                    "the path for the outputs, the number of iterations and the value for alpha");
             System.exit(1);
         }
 
         final Configuration conf = new Configuration();
-        final String INPUT_PATH = "PageRank/HadoopPageRank/src/main/resources/wiki-micro.txt";
-        final String OUTPUTS_PATH = "PageRank/HadoopPageRank/src/main/resources/outputs";
-        final int NUM_ITER = Integer.parseInt(args[0]);
-        final double ALPHA = Double.parseDouble(args[1]);
+        final String INPUT_PATH = args[0];
+        final String OUTPUTS_PATH = args[1];
+        final int NUM_ITER = Integer.parseInt(args[2]);
+        final double ALPHA = Double.parseDouble(args[3]);
 
         final Timestamp startingTime = new Timestamp(System.currentTimeMillis());
 
