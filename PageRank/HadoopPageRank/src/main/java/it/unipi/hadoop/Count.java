@@ -132,7 +132,7 @@ public class Count {
             return -1;
 
         //Locates the file in HDFS and retrieves the value of N
-        final String filePath = outputDir + "/count/part-r-0000";
+        final String filePath = outputDir + "/count/part-r-00000";
         Configuration conf = new Configuration();
         FileSystem fs = FileSystem.get(conf);
         Path hdfsPath = new Path(filePath);
