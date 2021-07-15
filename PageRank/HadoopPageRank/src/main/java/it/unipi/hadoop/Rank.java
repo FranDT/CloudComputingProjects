@@ -24,7 +24,7 @@ public class Rank {
         return singleton;
     }
 
-    public static class RankMapper extends Mapper<Text, Text, Text, Node>{
+    public static class RankMapper extends Mapper<Object, Text, Text, Node>{
         private static final Text keyEmit = new Text();
         private static final Node nodeEmit = new Node();
 
@@ -46,7 +46,7 @@ public class Rank {
          * @throws IOException
          * @throws InterruptedException
          */
-        public void map(final Text key, final Text value, Context context) throws IOException, InterruptedException{
+        public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             keyEmit.set(key.toString());
             nodeEmit.setByJson(value.toString());
             context.write(keyEmit, nodeEmit);
@@ -129,6 +129,9 @@ public class Rank {
 
         job.setMapperClass(RankMapper.class);
         job.setReducerClass(RankReducer.class);
+
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Node.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Node.class);
