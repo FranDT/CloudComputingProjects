@@ -1,0 +1,16 @@
+it/unipi/hadoop/Parse$ParseReducer.class
+it/unipi/hadoop/Sort.class
+it/unipi/hadoop/hadoopobjects/Node.class
+it/unipi/hadoop/Rank$RankReducer.class
+it/unipi/hadoop/Main.class
+it/unipi/hadoop/Count$CountMapper.class
+it/unipi/hadoop/Count$CountReducer.class
+it/unipi/hadoop/Sort$SortReducer.class
+it/unipi/hadoop/Parse$ParseMapper.class
+it/unipi/hadoop/Count.class
+it/unipi/hadoop/Rank.class
+it/unipi/hadoop/Sort$SortMapper.class
+it/unipi/hadoop/Rank$RankMapper.class
+it/unipi/hadoop/Parse.class
+it/unipi/hadoop/parser/Parser.class
+it/unipi/hadoop/hadoopobjects/Page.class
