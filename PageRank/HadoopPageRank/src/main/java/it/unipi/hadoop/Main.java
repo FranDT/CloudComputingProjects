@@ -69,7 +69,7 @@ public class Main {
                 System.out.println("An error occurred during the execution of the ranking phase");
                 System.exit(1);
             }
-            nextIterationSet = OUTPUTS_PATH + "rank-" + i;
+            nextIterationSet = OUTPUTS_PATH + "/rank-" + i;
         }
 
         final Timestamp afterRank = new Timestamp(System.currentTimeMillis());
