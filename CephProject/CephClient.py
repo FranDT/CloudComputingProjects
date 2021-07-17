@@ -43,7 +43,7 @@ if __name__ == '__main__':
             with open(filepath, "r") as file:
                 data = file.read(file)
             head, tail = os.path.split(filepath)
-            content = {"content": data}
+            content = {"content": data, "name": tail}
             r = requests.post("{}/files".format(url), content=content)
             print(r.text)
 
