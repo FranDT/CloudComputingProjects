@@ -35,7 +35,7 @@ public class Count {
         private static Parser parser = new Parser();
 
         private static String title;
-        private static Set<String> outlinks;
+        private static List<String> outlinks;
 
         /**
          *

@@ -16,12 +16,12 @@ import java.util.*;
  */
 public class Node implements Writable {
     private double pageRank;
-    private Set<String> outlinks;
+    private List<String> outlinks;
     private boolean isNode;
 
     public Node(){
         setPageRank(0);
-        setAdjacencyList(new HashSet<String>());
+        setAdjacencyList(new LinkedList<String>());
         setIsNode(false);
     }
 
@@ -29,13 +29,13 @@ public class Node implements Writable {
         this.pageRank = pageRank;
     }
 
-    public void setAdjacencyList(final Set<String> outlinks){
+    public void setAdjacencyList(final List<String> outlinks){
         this.outlinks = outlinks;
     }
 
     public void setIsNode(final boolean value) { this.isNode = value; }
 
-    public void set(final double pageRank, final Set<String> outlinks, final boolean isNode){
+    public void set(final double pageRank, final List<String> outlinks, final boolean isNode){
         setPageRank(pageRank);
         setAdjacencyList(outlinks);
         setIsNode(isNode);
@@ -51,7 +51,7 @@ public class Node implements Writable {
         return pageRank;
     }
 
-    public Set<String> getAdjacencyList(){
+    public List<String> getAdjacencyList(){
         return outlinks;
     }
 
@@ -74,7 +74,7 @@ public class Node implements Writable {
         pageRank = in.readDouble();
 
         int listSize = in.readInt();
-        outlinks = new HashSet<String>();
+        outlinks = new LinkedList<String>();
         while(listSize > 0){
             outlinks.add(in.readUTF());
             listSize--;

@@ -21,8 +21,8 @@ public class Parser {
         return null;
     }
 
-    public Set<String> getOulinks(final String fileToSearch) {
-        Set<String> outlinks = new HashSet<String>();
+    public List<String> getOulinks(final String fileToSearch) {
+        List<String> outlinks = new LinkedList<String>();
 
         try {
             //String line;
@@ -38,6 +38,6 @@ public class Parser {
             e.printStackTrace();
         }
 
-        return new HashSet<String>(outlinks);
+        return new LinkedList<String>(outlinks);
     }
 }

@@ -54,7 +54,7 @@ public class Rank {
             mass = nodeEmit.getPageRank()/nodeEmit.getAdjacencyList().size();
 
             nodeEmit.setIsNode(false);
-            nodeEmit.setAdjacencyList(new HashSet<String>());
+            nodeEmit.setAdjacencyList(new LinkedList<String>());
             for(String outlink : nodeEmit.getAdjacencyList()){
                 keyEmit.set(outlink);
                 nodeEmit.setPageRank(mass);
