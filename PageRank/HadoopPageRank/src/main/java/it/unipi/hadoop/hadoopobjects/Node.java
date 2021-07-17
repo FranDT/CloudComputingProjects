@@ -98,6 +98,9 @@ public class Node implements Writable {
 
     public void setByJson(final String json){
         Node target = new Gson().fromJson(json, Node.class);
+        if(target == null){
+            return;
+        }
         set(target.getPageRank(), target.getAdjacencyList(), target.getIsNode());
     }
 }
