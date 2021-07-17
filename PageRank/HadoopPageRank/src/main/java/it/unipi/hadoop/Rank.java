@@ -48,6 +48,9 @@ public class Rank {
          */
         public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             keyEmit.set(key.toString());
+            if(value.toString().startsWith("\"")){
+                System.out.println(value.toString());
+            }
             nodeEmit.setByJson(value.toString());
             context.write(keyEmit, nodeEmit);
 
