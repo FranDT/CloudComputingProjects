@@ -107,7 +107,9 @@ public class Parse {
         public void reduce(final Text key, final Iterable<Text> value, Context context) throws IOException, InterruptedException{
             outlinks = new LinkedList<String>();
             for(Text link : value){
-                outlinks.add(link.toString());
+                if(!link.equals("")){
+                    outlinks.add(link.toString());
+                }
             }
             rank = 1.0/pageNumber;
             valueEmit.set(rank, outlinks, true);
