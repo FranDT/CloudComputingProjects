@@ -21,7 +21,7 @@ public class Parser {
         return null;
     }
 
-    public List<String> getOulinks(final String fileToSearch) {
+    public Set<String> getOulinks(final String fileToSearch) {
         Set<String> outlinks = new HashSet<String>();
 
         try {
@@ -31,13 +31,13 @@ public class Parser {
             arr = fileToSearch.split("\\[\\[");
             for (int i = 0; i < arr.length; i++) {
                 if (arr[i].contains("]]")) {
-                    outlinks.add(arr[i].substring(0, arr[i].indexOf("]]") - 1));
+                    outlinks.add(arr[i].substring(0, arr[i].indexOf("]]")));
                 }
             }
         }catch(Exception e){
             e.printStackTrace();
         }
 
-        return new LinkedList<String>(outlinks);
+        return new HashSet<String>(outlinks);
     }
 }

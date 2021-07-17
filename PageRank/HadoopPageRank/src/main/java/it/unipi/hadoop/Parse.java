@@ -33,7 +33,7 @@ public class Parse {
         private static final Text placeholder = new Text("");
 
         private static String title;
-        private static List<String> outlinks;
+        private static Set<String> outlinks;
 
         /**
          *
@@ -74,7 +74,7 @@ public class Parse {
         private static final Node valueEmit = new Node();
 
         private static int pageNumber;
-        private static List<String> outlinks;
+        private static Set<String> outlinks;
         private static double rank;
 
 
@@ -105,11 +105,9 @@ public class Parse {
          * @throws InterruptedException
          */
         public void reduce(final Text key, final Iterable<Text> value, Context context) throws IOException, InterruptedException{
-            outlinks = new LinkedList<String>();
+            outlinks = new HashSet<String>();
             for(Text link : value){
-                if(!link.toString().equals("")){
-                    outlinks.add(link.toString());
-                }
+                outlinks.add(link.toString());
             }
             rank = 1.0/pageNumber;
             valueEmit.set(rank, outlinks, true);
