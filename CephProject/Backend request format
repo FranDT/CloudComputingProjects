@@ -10,3 +10,4 @@
  5) statistics --> request = {'type': 'stats'}
  
  Return Value of all of them is a string, except download which returns bytes
+ Arguments are all strings except for file['content'] which has to be bytes.
