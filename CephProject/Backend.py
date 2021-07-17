@@ -5,6 +5,8 @@ def processRequest(request):
     cluster = rados.Rados(conffile='ceph.conf')
     cluster.connect()
     pool = "drive"
+    if not cluster.pool_exists(pool):
+        cluster.create_pool(pool)
     response = ""
     if (request['type'] == "ls"):
         response = ls(cluster, pool)
@@ -13,13 +15,14 @@ def processRequest(request):
     elif (request['type'] == "download"):
         response = download(cluster, pool, request['name'])
     elif (request['type'] == "delete"):
-        response = download(cluster, pool, request['name'])
+        response = delete(cluster, pool, request['name'])
     elif (request['type'] == "stats"):
-        response = download(cluster, pool)
+        response = stats(cluster, pool)
     else:
         response = "Invalid Operation"
     cluster.shutdown()
     return response
+
     
 
 def ls(cluster, pool):
@@ -95,4 +98,22 @@ def stats(cluster, pool):
         ioctx.close()
         return response
 
+request = {'type': 'ls'}
+print(processRequest(request))
+content = 'ahmed'
+myBytes = bytes(content, 'utf-8')
+request = {'type': 'upload', 'file': {'name': 'ahmed', 'content': myBytes}}
+print(processRequest(request))
+request = {'type': 'ls'}
+print(processRequest(request))
+request = {'type': 'download', 'name': 'ahmed'}
+print(processRequest(request))
+request = {'type': 'ls'}
+print(processRequest(request))
+request = {'type': 'delete', 'name': 'ahmed'}
+print(processRequest(request))
+request = {'type': 'ls'}
+print(processRequest(request))
+request = {'type': 'stats'}
+print(processRequest(request))
     
