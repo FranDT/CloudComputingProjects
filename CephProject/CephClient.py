@@ -1,4 +1,5 @@
 import requests
+import os
 
 url = ""
 
@@ -38,9 +39,12 @@ if __name__ == '__main__':
             print(r.text)
 
         elif command == "upload":
-            with open(tokens[1], "r") as file:
-                data = file.read()
-            r = requests.post("{}/files".format(url), data = data)
+            filepath = tokens[1]
+            with open(filepath, "r") as file:
+                data = file.read(file)
+            head, tail = os.path.split(filepath)
+            content = {"content": data}
+            r = requests.post("{}/files".format(url), content=content)
             print(r.text)
 
         elif command == "download":
