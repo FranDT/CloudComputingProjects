@@ -107,7 +107,7 @@ public class Parse {
         public void reduce(final Text key, final Iterable<Text> value, Context context) throws IOException, InterruptedException{
             outlinks = new LinkedList<String>();
             for(Text link : value){
-                if(!link.equals("")){
+                if(!link.toString().equals("")){
                     outlinks.add(link.toString());
                 }
             }

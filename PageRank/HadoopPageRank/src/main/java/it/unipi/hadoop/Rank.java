@@ -48,7 +48,7 @@ public class Rank {
          */
         public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             keyEmit.set(key.toString());
-            nodeEmit.setByJson(value.toString().replaceAll("\"", ""));
+            nodeEmit.setByJson(value.toString());
             context.write(keyEmit, nodeEmit);
 
             mass = nodeEmit.getPageRank()/nodeEmit.getAdjacencyList().size();
