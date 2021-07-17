@@ -25,15 +25,13 @@ public class Parser {
         Set<String> outlinks = new HashSet<String>();
 
         try {
-            String line;
+            //String line;
             String[] arr;
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(fileToSearch));
-            while ((line = bufferedReader.readLine()) != null) {
-                arr = line.split("\\[\\[");
-                for (int i = 0; i < arr.length; i++) {
-                    if (arr[i].contains("]]")) {
-                        outlinks.add(arr[i].substring(0, arr[i].indexOf("]]") - 1));
-                    }
+            //BufferedReader bufferedReader = new BufferedReader(new FileReader(fileToSearch));
+            arr = fileToSearch.split("\\[\\[");
+            for (int i = 0; i < arr.length; i++) {
+                if (arr[i].contains("]]")) {
+                    outlinks.add(arr[i].substring(0, arr[i].indexOf("]]") - 1));
                 }
             }
         }catch(Exception e){
