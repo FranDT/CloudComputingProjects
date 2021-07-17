@@ -1,0 +1,9 @@
+1) On controller, run "juju status" to get the container ids of the ceph-mon instances.
+   For us: machine 172.16.3.200  --> juju-f7b247-1-lxd-0
+           machine 172.16.3.198  --> juju-f7b247-2-lxd-1
+           machine 172.16.3.211  --> juju-f7b247-3-lxd-1
+
+2) Go on each machine and run the command: lxc exec CONTAINER_ID /bin/bash
+3) Put the code of the backend inside the container
+4) Run python3 SCRIPT_NAME
+         
