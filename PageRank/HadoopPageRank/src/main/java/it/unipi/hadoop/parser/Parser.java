@@ -1,7 +1,5 @@
 package it.unipi.hadoop.parser;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
