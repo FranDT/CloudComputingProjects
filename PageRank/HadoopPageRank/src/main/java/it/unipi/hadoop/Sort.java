@@ -25,10 +25,10 @@ public class Sort {
         return singleton;
     }
 
-    public static class SortMapper extends Mapper<Object, Text, Page,Text>{
+    public static class SortMapper extends Mapper<Object, Text, Page,NullWritable>{
         private static final Page keyEmit = new Page();
         private static final Node node = new Node();
-        private static final Text valueEmit = new Text("");
+        private static final NullWritable valueEmit = NullWritable.get();
 
         /**
          *
@@ -52,7 +52,7 @@ public class Sort {
         }
     }
 
-    public static class SortReducer extends Reducer<Page, Text, Text, DoubleWritable> {
+    public static class SortReducer extends Reducer<Page, NullWritable, Text, DoubleWritable> {
         private static final Text keyEmit = new Text();
         private static final DoubleWritable valueEmit = new DoubleWritable();
 
@@ -66,7 +66,7 @@ public class Sort {
          * @throws IOException
          * @throws InterruptedException
          */
-        public void reduce(final Page key, final Iterable<Text> values, Context context) throws IOException, InterruptedException{
+        public void reduce(final Page key, final Iterable<NullWritable> values, Context context) throws IOException, InterruptedException{
             keyEmit.set(key.getTitle());
             valueEmit.set(key.getPageRank());
             System.out.println("\n\n\n\n\n\n" + keyEmit.toString());
@@ -86,7 +86,7 @@ public class Sort {
         job.setReducerClass(SortReducer.class);
 
         job.setMapOutputKeyClass(Page.class);
-        job.setMapOutputValueClass(Text.class);
+        job.setMapOutputValueClass(NullWritable.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
@@ -95,6 +95,9 @@ public class Sort {
 
         KeyValueTextInputFormat.addInputPath(job, new Path(input));
         FileOutputFormat.setOutputPath(job, new Path(outputDir + "/sort"));
+        
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
 
         return job.waitForCompletion(true);
     }
