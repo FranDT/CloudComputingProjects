@@ -44,8 +44,8 @@ public class Sort {
          * @throws InterruptedException
          */
         public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
-            node.setByJson(value.toString());
-            keyEmit.set(key.toString(), node.getPageRank());
+            node.setByJson(value.toString().split("\t")[1]);
+            keyEmit.set(value.toString().split("\t")[0], node.getPageRank());
             context.write(keyEmit, valueEmit);
         }
     }
