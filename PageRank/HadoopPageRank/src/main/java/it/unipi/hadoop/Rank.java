@@ -153,6 +153,9 @@ public class Rank {
          */
         KeyValueTextInputFormat.addInputPath(job, new Path(input));
         FileOutputFormat.setOutputPath(job, new Path(outputDir + "/rank-" + iteration));
+        
+        job.setOutputFormatClass(TextOutputFormat.class);
+
 
         return job.waitForCompletion(true);
     }
