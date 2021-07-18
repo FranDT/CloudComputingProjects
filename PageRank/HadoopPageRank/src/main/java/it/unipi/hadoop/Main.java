@@ -66,10 +66,10 @@ public class Main {
         String nextIterationSet = OUTPUTS_PATH + "/parse";
         for(int i = 0; i < NUM_ITER; i++){
             if(!Rank.getRank().run(nextIterationSet, OUTPUTS_PATH, ALPHA, pageNumber, i)){
-                System.out.println("\n\n\n\n\n\n\n\n\n" + nextIterationSet + "\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("An error occurred during the execution of the ranking phase");
                 System.exit(1);
             }
+            System.out.println("\n\n\n\n\n\n\n\n\n" + nextIterationSet + "\n\n\n\n\n\n\n\n\n\n");
             nextIterationSet = OUTPUTS_PATH + "/rank-" + i;
         }
 
