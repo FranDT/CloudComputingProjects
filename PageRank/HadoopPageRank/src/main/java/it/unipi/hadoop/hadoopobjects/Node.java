@@ -97,10 +97,17 @@ public class Node implements Writable {
     }
 
     public void setByJson(final String json){
-        Node target = new Gson().fromJson(json, Node.class);
-        if(target == null){
-            return;
+        Double pageRank = Double.parseDouble(json.substring(json.indexOf("pagerank\":") + 10, json.indexOf("outlinks\":") - 2));
+
+        String outlinks = json.substring(json.indexOf("outlinks\":") + 11, json.indexOf("isNode\":") - 3);
+        List<String> outlinksList = new ArrayList<String>();
+        String[] toParse = outlinks.split(",");
+        for(String s : toParse){
+            outlinksList.add(s);
         }
-        set(target.getPageRank(), target.getAdjacencyList(), target.getIsNode());
+
+        boolean isNode = Boolean.getBoolean(json.substring(json.indexOf("isNode\":") + 8));
+
+        this.set(pageRank, outlinksList, isNode);
     }
 }
