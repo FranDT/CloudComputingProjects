@@ -81,7 +81,6 @@ public class Main {
          * obtain the final result of our PageRank algorithm.
          *
          */
-        System.out.println("\n\n\n\n\n\n\n\n\n" + nextIterationSet + "\n\n\n\n\n\n\n\n\n\n");
         if(!Sort.getSort().run(nextIterationSet, OUTPUTS_PATH)){
             System.out.println("An error occurred during the execution of the sorting phase");
             System.exit(1);

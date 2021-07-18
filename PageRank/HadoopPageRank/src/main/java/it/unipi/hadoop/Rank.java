@@ -48,15 +48,13 @@ public class Rank {
          */
         public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             keyEmit.set(value.toString().split("\t")[0]);
-            System.out.println("\n\n\n\n\n\n\n\n" + value.toString());
+            System.out.println("\n\n\n\n\n\n\n\nMap " + value.toString());
             nodeEmit.setByJson(value.toString().split("\t")[1]);
 
             mass = nodeEmit.getPageRank()/nodeEmit.getAdjacencyList().size();
 
-            System.out.println("\n\n\n\n\n\n\n\n" + mass);
-            System.out.println("\n\n\n\n\n\n\n\n" + nodeEmit.getAdjacencyList().size());
-
             nodeEmit.setPageRank(0.0);
+            System.out.println("\n\n\n\n\n\n\n\nMap " + keyEmit.toString() + nodeEmit.toString());
             context.write(keyEmit, nodeEmit);
 
             nodeEmit.setIsNode(false);
@@ -64,6 +62,7 @@ public class Rank {
             for(String outlink : nodeEmit.getAdjacencyList()){
                 keyEmit.set(outlink);
                 nodeEmit.setPageRank(mass);
+                System.out.println("\n\n\n\n\n\n\n\nMap " + keyEmit.toString() + nodeEmit.toString());
                 context.write(keyEmit, nodeEmit);
             }
         }
@@ -109,6 +108,7 @@ public class Rank {
         public void reduce(final Text key, final Iterable<Node> values, Context context) throws IOException, InterruptedException{
             rank = 0.0;
 
+            System.out.println("\n\n\n\n\n\n\n\n\n\nReduce " + values.toString());
             for(Node n : values){
                 if(!n.getIsNode())
                     rank += n.getPageRank();
@@ -116,7 +116,7 @@ public class Rank {
                     nodeEmit.set(n);
             }
 
-            nodeEmit.setPageRank( (alpha / ((double)pageNumber)) + ((1 - alpha) * rank) );
+            nodeEmit.setPageRank( (alpha / ((double)pageNumber)) + ((1.0 - alpha) * rank) );
             context.write(key, nodeEmit);
         }
     }
