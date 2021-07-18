@@ -50,9 +50,11 @@ public class Rank {
             keyEmit.set(value.toString().split("\t")[0]);
             System.out.println("\n\n\n\n\n\n\n\n" + value.toString() + "\n\n\n\n\n\n\n\n");
             nodeEmit.setByJson(value.toString().split("\t")[1]);
-            context.write(keyEmit, nodeEmit);
 
             mass = nodeEmit.getPageRank()/nodeEmit.getAdjacencyList().size();
+
+            nodeEmit.setPageRank(0.0);
+            context.write(keyEmit, nodeEmit);
 
             nodeEmit.setIsNode(false);
             nodeEmit.setAdjacencyList(new LinkedList<String>());
@@ -140,7 +142,7 @@ public class Rank {
         job.getConfiguration().setDouble("alpha", alpha);
         job.getConfiguration().setInt("page.number", pageNumber);
 
-        job.setNumReduceTasks(5);
+        //job.setNumReduceTasks(5);
 
         /*
             Here we use the KeyValueTextInputFormat, that is an extended version of TextInputFormat, which is useful for us

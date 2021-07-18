@@ -87,7 +87,7 @@ public class Main {
         }
 
         final Timestamp afterSort = new Timestamp(System.currentTimeMillis());
-        System.out.println("Parse and node creation phase ended after " + ((afterSort.getTime() - afterParse.getTime())/1000) + " seconds");
+        System.out.println("Sort phase ended after " + ((afterSort.getTime() - afterParse.getTime())/1000) + " seconds");
         System.out.println("Total completion time: " + ((afterSort.getTime() - startingTime.getTime())/1000) + " seconds");
     }
 }

@@ -147,7 +147,7 @@ public class Parse {
         /*
             Sets the number of reducers to be used for the MapReduce job.
          */
-        job.setNumReduceTasks(5);
+        //job.setNumReduceTasks(5);
 
         FileInputFormat.addInputPath(job, new Path(input));
         FileOutputFormat.setOutputPath(job, new Path(outputDir + "/parse"));
