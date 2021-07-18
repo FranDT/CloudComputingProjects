@@ -9,7 +9,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 
 import java.io.IOException;
@@ -156,8 +155,6 @@ public class Rank {
         KeyValueTextInputFormat.addInputPath(job, new Path(input));
         FileOutputFormat.setOutputPath(job, new Path(outputDir + "/rank-" + iteration));
         
-        job.setOutputFormatClass(TextOutputFormat.class);
-
 
         return job.waitForCompletion(true);
     }
