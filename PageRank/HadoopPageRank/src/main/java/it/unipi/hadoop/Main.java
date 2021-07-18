@@ -73,7 +73,7 @@ public class Main {
         }
 
         final Timestamp afterRank = new Timestamp(System.currentTimeMillis());
-        System.out.println("Parse and node creation phase ended after " + ((afterRank.getTime() - afterParse.getTime())/1000) + " seconds");
+        System.out.println("Rank phase ended after " + ((afterRank.getTime() - afterParse.getTime())/1000) + " seconds");
 
         /**
          *
