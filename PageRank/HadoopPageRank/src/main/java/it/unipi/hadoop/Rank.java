@@ -29,6 +29,7 @@ public class Rank {
         private static final Node nodeEmit = new Node();
 
         private static double mass;
+        private static List<String> outlinks = new LinkedList<String>();
 
         /**
          *
@@ -48,21 +49,22 @@ public class Rank {
          */
         public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             keyEmit.set(value.toString().split("\t")[0]);
-            System.out.println("\n\n\n\n\n\n\n\nMap " + value.toString());
             nodeEmit.setByJson(value.toString().split("\t")[1]);
 
             mass = nodeEmit.getPageRank()/nodeEmit.getAdjacencyList().size();
 
             nodeEmit.setPageRank(0.0);
-            System.out.println("\n\n\n\n\n\n\n\nMap " + keyEmit.toString() + nodeEmit.toString());
+            outlinks = nodeEmit.getAdjacencyList();
             context.write(keyEmit, nodeEmit);
+
+            System.out.println("\n\n\n\n\n\n\n\n\n\n " + outlinks.toString());
 
             nodeEmit.setIsNode(false);
             nodeEmit.setAdjacencyList(new LinkedList<String>());
-            for(String outlink : nodeEmit.getAdjacencyList()){
+            for(String outlink : outlinks){
                 keyEmit.set(outlink);
                 nodeEmit.setPageRank(mass);
-                System.out.println("\n\n\n\n\n\n\n\nMap " + keyEmit.toString() + nodeEmit.toString());
+                System.out.println("\n\n\n\n\n\n\n\n\n\n In the loop " + keyEmit.toString());
                 context.write(keyEmit, nodeEmit);
             }
         }
@@ -108,12 +110,15 @@ public class Rank {
         public void reduce(final Text key, final Iterable<Node> values, Context context) throws IOException, InterruptedException{
             rank = 0.0;
 
-            System.out.println("\n\n\n\n\n\n\n\n\n\nReduce " + values.toString());
             for(Node n : values){
-                if(!n.getIsNode())
+                if(!n.getIsNode()) {
                     rank += n.getPageRank();
-                else
+                    System.out.println("\n\n\n\n\n\nReducer if");
+                }
+                else{
                     nodeEmit.set(n);
+                    System.out.println("\n\n\n\n\n\nReducer else");
+                }
             }
 
             nodeEmit.setPageRank( (alpha / ((double)pageNumber)) + ((1.0 - alpha) * rank) );
