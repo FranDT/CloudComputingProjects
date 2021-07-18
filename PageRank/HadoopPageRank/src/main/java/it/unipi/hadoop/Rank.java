@@ -57,14 +57,11 @@ public class Rank {
             outlinks = nodeEmit.getAdjacencyList();
             context.write(keyEmit, nodeEmit);
 
-            System.out.println("\n\n\n\n\n\n\n\n\n\n " + outlinks.toString());
-
             nodeEmit.setIsNode(false);
             nodeEmit.setAdjacencyList(new LinkedList<String>());
             for(String outlink : outlinks){
                 keyEmit.set(outlink);
                 nodeEmit.setPageRank(mass);
-                System.out.println("\n\n\n\n\n\n\n\n\n\n In the loop " + keyEmit.toString());
                 context.write(keyEmit, nodeEmit);
             }
         }
@@ -113,11 +110,9 @@ public class Rank {
             for(Node n : values){
                 if(!n.getIsNode()) {
                     rank += n.getPageRank();
-                    System.out.println("\n\n\n\n\n\nReducer if");
                 }
                 else{
                     nodeEmit.set(n);
-                    System.out.println("\n\n\n\n\n\nReducer else");
                 }
             }
 

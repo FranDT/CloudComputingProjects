@@ -46,6 +46,7 @@ public class Sort {
         public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             node.setByJson(value.toString().split("\t")[1]);
             keyEmit.set(value.toString().split("\t")[0], node.getPageRank());
+            System.out.println("\n\n\n\n\n\n" + keyEmit.toString());
             context.write(keyEmit, valueEmit);
         }
     }
@@ -67,6 +68,8 @@ public class Sort {
         public void reduce(final Page key, final Iterable<Text> values, Context context) throws IOException, InterruptedException{
             keyEmit.set(key.getTitle());
             valueEmit.set(key.getPageRank());
+            System.out.println("\n\n\n\n\n\n" + keyEmit.toString());
+            System.out.println("\n\n\n\n\n\n" + valueEmit.toString());
             context.write(keyEmit, valueEmit);
         }
     }
