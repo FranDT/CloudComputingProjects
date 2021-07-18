@@ -46,6 +46,7 @@ public class Page implements WritableComparable<Page> {
         pageRank = in.readDouble();
     }
 
+    @Override
     public int compareTo(Page target) {
         double rank = target.getPageRank();
         String title = target.getTitle();
