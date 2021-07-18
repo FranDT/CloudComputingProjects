@@ -46,7 +46,8 @@ public class Sort {
         public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             node.setByJson(value.toString().split("\t")[1]);
             keyEmit.set(value.toString().split("\t")[0], node.getPageRank());
-            System.out.println("\n\n\n\n\n\n" + keyEmit.toString());
+            System.out.println("\n\n\n\n\n\n" + keyEmit.getTitle());
+            System.out.println(keyEmit.getPageRank());
             context.write(keyEmit, valueEmit);
         }
     }
