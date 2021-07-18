@@ -97,23 +97,3 @@ def stats(cluster, pool):
     finally:
         ioctx.close()
         return response
-
-request = {'type': 'ls'}
-print(processRequest(request))
-content = 'ahmed'
-myBytes = bytes(content, 'utf-8')
-request = {'type': 'upload', 'file': {'name': 'ahmed', 'content': myBytes}}
-print(processRequest(request))
-request = {'type': 'ls'}
-print(processRequest(request))
-request = {'type': 'download', 'name': 'ahmed'}
-print(processRequest(request))
-request = {'type': 'ls'}
-print(processRequest(request))
-request = {'type': 'delete', 'name': 'ahmed'}
-print(processRequest(request))
-request = {'type': 'ls'}
-print(processRequest(request))
-request = {'type': 'stats'}
-print(processRequest(request))
-    
