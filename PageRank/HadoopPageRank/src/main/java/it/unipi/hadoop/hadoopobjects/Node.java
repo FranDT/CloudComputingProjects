@@ -97,7 +97,7 @@ public class Node implements Writable {
     }
 
     public void setByJson(final String json){
-        Double pageRank = Double.parseDouble(json.substring(json.indexOf("pagerank\":") + 10, json.indexOf("outlinks\":") - 2));
+        Double pageRank = Double.parseDouble(json.substring(json.indexOf("pageRank\":") + 10, json.indexOf("outlinks\":") - 2));
 
         String outlinks = json.substring(json.indexOf("outlinks\":") + 11, json.indexOf("isNode\":") - 3);
         List<String> outlinksList = new ArrayList<String>();
