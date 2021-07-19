@@ -40,11 +40,11 @@ if __name__ == '__main__':
 
         elif command == "upload":
             filepath = tokens[1]
-            with open(filepath, "r") as file:
-                data = file.read(file)
+            with open(filepath, "r") as f:
+                data = f.read()
             head, tail = os.path.split(filepath)
-            content = {"content": data, "name": tail}
-            r = requests.post("{}/v1/files".format(url), content=content)
+            files = {"content": data, "name": tail}
+            r = requests.post("{}/v1/files".format(url), files=files)
             print(r.text)
 
         elif command == "download":

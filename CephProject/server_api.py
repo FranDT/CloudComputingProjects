@@ -23,8 +23,8 @@ def download_file(file_name):
 
 @app.route('/v1/files' , methods=['POST'])
 def upload_file():
-    file = request.files['file']
-    file_name = file.filename
+    file = request.files['content']
+    file_name = request.files['name']
     file_content = file.read()
     req = {'type': 'upload', 'file': {'name': file_name, 'content': file_content}}
     return server.processRequest(req)
