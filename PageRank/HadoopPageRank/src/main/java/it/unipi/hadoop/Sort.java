@@ -74,7 +74,7 @@ public class Sort {
             valueEmit.set(key.getPageRank());
             System.out.println("\n\n\n\n\n\n" + keyEmit.toString());
             System.out.println(valueEmit.toString());
-            context.write(keyEmit, valueEmit);
+            context.write(new Text(key.getTitle()), new DoubleWritable(key.getPageRank()));
         }
     }
 
