@@ -10,6 +10,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class Sort {
     public static class SortMapper extends Mapper<Object, Text, Page,Text>{
         private static final Page keyEmit = new Page();
         private static final Node node = new Node();
-        private static final Text valueEmit = "";
+        private static final Text valueEmit = new Text("");
 
         /**
          *
