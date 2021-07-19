@@ -31,6 +31,8 @@ public class PageRankSpark {
 
         final JavaRDD<String> pages = sc.textFile(INPUT_PATH).cache();
 
+        System.out.println("\n\n\n\n\nProva 1");
+
         /**
          *
          * Parse phase: for the parse phase, we first of all create an RDD in which we have a list of tuples with title
@@ -42,6 +44,7 @@ public class PageRankSpark {
          */
         JavaPairRDD<String, Iterable<String>> all_nodes = pages.flatMapToPair(new PairFlatMapFunction<String, String, Iterable<String>>() {
             public Iterator<Tuple2<String, Iterable<String>>> call(String page) throws Exception {
+                System.out.println("\n\n\n\n\nProva 2");
                 String[] arr;
                 String title = "";
                 Matcher matcher;
@@ -67,8 +70,10 @@ public class PageRankSpark {
             }
         });
 
+        System.out.println("\n\n\n\nProva 3");
         JavaPairRDD<String, Iterable<String>> unique_nodes = all_nodes.reduceByKey(new Function2<Iterable<String>, Iterable<String>, Iterable<String>>() {
             public Iterable<String> call(Iterable<String> outlinks1, Iterable<String> outlinks2) throws Exception {
+                System.out.println("\n\n\n\n\nProva 4");
                 List<String>  ret = new ArrayList<String>();
 
                 for(String link : outlinks1){
