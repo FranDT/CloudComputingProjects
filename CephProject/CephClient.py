@@ -1,7 +1,7 @@
 import requests
 import os
 
-url = "172.16.3.207:8080"
+url = "htt://172.16.3.207:8080"
 
 
 def printcommands():
