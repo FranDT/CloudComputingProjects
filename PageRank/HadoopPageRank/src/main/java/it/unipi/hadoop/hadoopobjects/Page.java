@@ -36,15 +36,37 @@ public class Page implements WritableComparable<Page> {
         return pageRank;
     }
 
+    @Override
     public void write(DataOutput out) throws IOException {
         out.writeUTF(title);
         out.writeDouble(pageRank);
     }
-
+    
+    @Override
     public void readFields(DataInput in) throws IOException {
         title = in.readUTF();
         pageRank = in.readDouble();
     }
+    
+    @Override
+    public int hashCode() {
+        return this.title.hashCode();
+    }
+    
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Page){
+            Page o = (Page)obj;
+            return this.title.equals(o.getTitle()) && this.pageRank == o.getPageRank();
+        }
+        return false;
+    }
+    
+    @Override
+    public String toString() {
+        return "Title:" + this.title + "\tRank:" + this.pageRank;
+
 
     @Override
     public int compareTo(Page target) {
