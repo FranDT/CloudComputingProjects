@@ -83,7 +83,7 @@ public class Sort {
 
         job.setJarByClass(Sort.class);
         
-        job.setSortComparatorClass(Page.class);
+        job.setSortComparatorClass(DoubleWritable.DecreasingComparator.class);
 
         job.setMapperClass(SortMapper.class);
         job.setReducerClass(SortReducer.class);
