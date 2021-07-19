@@ -31,8 +31,6 @@ public class PageRankSpark {
 
         final JavaRDD<String> pages = sc.textFile(INPUT_PATH).cache();
 
-        System.out.println("\n\n\n\n\n" + pages.toString());
-
         /**
          *
          * Parse phase: for the parse phase, we first of all create an RDD in which we have a list of tuples with title
@@ -49,7 +47,7 @@ public class PageRankSpark {
             Matcher matcher;
             List<String> outlinks = new LinkedList<>();
             List<Tuple2<String, Iterable<String>>> myRDD = new ArrayList<>();
-            while (page != null) {
+            if (page != null) {
                 Pattern pattern = Pattern.compile("<title.*?>(.*?)</title>");
                 matcher = pattern.matcher(page);
 
