@@ -25,7 +25,7 @@ def download_file(file_name):
 def upload_file():
     file = request.files['content']
     file_name = request.files['name']
-    file_content = file.read()
+    file_content = file
     req = {'type': 'upload', 'file': {'name': file_name, 'content': file_content}}
     return server.processRequest(req)
 

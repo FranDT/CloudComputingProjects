@@ -42,8 +42,7 @@ if __name__ == '__main__':
             filepath = tokens[1]
             with open(filepath, "r") as f:
                 data = f.read()
-            head, tail = os.path.split(filepath)
-            files = {"content": data, "name": tail}
+            files = {"content": data, "name": filepath}
             r = requests.post("{}/v1/files".format(url), files=files)
             print(r.text)
 
