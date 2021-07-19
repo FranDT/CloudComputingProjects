@@ -1,0 +1,117 @@
+---
+swagger: "2.0"
+info:
+  description: "A distributed file storage system based on Ceph."
+  version: "1.0.0"
+  title: "Ceph-based file system"
+host: "172.16.0.207:8080"
+basePath: "/v2"
+tags:
+- name: "files"
+  description: "File collection"
+- name: "stats"
+  description: "Stats collection"
+schemes:
+- "http"
+paths:
+  /files:
+    get:
+      tags:
+      - "files"
+      summary: "Returns a list of files."
+      description: ""
+      operationId: "files_get"
+      parameters: []
+      responses:
+        "200":
+          description: "An array of file names"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "swagger_server.controllers.files_controller"
+    post:
+      tags:
+      - "files"
+      summary: "Upload a new file"
+      operationId: "upload_file"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "upfile"
+        in: "formData"
+        description: "File data"
+        required: true
+        type: "file"
+      - name: "name"
+        in: "formData"
+        description: "File name"
+        required: true
+        type: "string"
+      responses:
+        "405":
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.files_controller"
+  /files/{name}:
+    get:
+      tags:
+      - "files"
+      summary: "Download a file by name"
+      description: "Returns a single file"
+      operationId: "get_file_by_name"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "name of the file to download"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "file"
+        "400":
+          description: "Invalid name supplied"
+        "404":
+          description: "File not found"
+      x-swagger-router-controller: "swagger_server.controllers.files_controller"
+    delete:
+      tags:
+      - "files"
+      summary: "Deletes a file"
+      operationId: "delete_file"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "file name to delete"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "file deleted successfully"
+        "400":
+          description: "invalid name supplied"
+        "404":
+          description: "file not found"
+      x-swagger-router-controller: "swagger_server.controllers.files_controller"
+  /stats:
+    get:
+      tags:
+      - "stats"
+      summary: "Returns a list of files."
+      description: ""
+      operationId: "stats_get"
+      parameters: []
+      responses:
+        "200":
+          description: "An array of file names"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "swagger_server.controllers.stats_controller"
