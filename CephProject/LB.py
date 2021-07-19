@@ -6,17 +6,17 @@ app = Flask(__name__)
 
 IPs = 'monitors.txt'
 
-@app.route('/files', methods=['GET', 'POST'])
+@app.route('/v1/files', methods=['GET', 'POST'])
 def fwdUploadLS():
     myIP = chooseIP()  
     return redirect('http://{}:8080/{}'.format(myIP, request.path), code=307)
 
-@app.route('/stats', methods=['GET'])
+@app.route('/v1/stats', methods=['GET'])
 def stats():
     myIP = chooseIP()  
     return redirect('http://{}:8080/{}'.format(myIP, request.path), code=307)
 
-@app.route('/files/<name>', methods=['GET', 'DELETE'])
+@app.route('/v1/files/<name>', methods=['GET', 'DELETE'])
 def fwdDeleteDownload(name):
     myIP = chooseIP()  
     return redirect('http://{}:8080/{}'.format(myIP, request.path), code=307)
