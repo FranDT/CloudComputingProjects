@@ -85,6 +85,7 @@ public class Sort {
         job.setJarByClass(Sort.class);
         
         job.setMapperClass(SortMapper.class);
+        job.setPartitionerClass(HashPartitioner.class);
         job.setReducerClass(SortReducer.class);
 
         job.setMapOutputKeyClass(Page.class);
