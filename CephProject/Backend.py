@@ -2,7 +2,7 @@ import rados
 
 
 def processRequest(request):
-    cluster = rados.Rados(conffile='ceph.conf')
+    cluster = rados.Rados(conffile='/etc/ceph/ceph.conf')
     cluster.connect()
     pool = "drive"
     if not cluster.pool_exists(pool):
