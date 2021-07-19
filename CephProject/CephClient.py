@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
         elif command == "upload":
             filepath = tokens[1]
-            with open(filepath, "r") as f:
+            with open(filepath, "rb") as f:
                 data = f.read()
             files = {"content": data, "name": filepath}
             r = requests.post("{}/v1/files".format(url), files=files)
