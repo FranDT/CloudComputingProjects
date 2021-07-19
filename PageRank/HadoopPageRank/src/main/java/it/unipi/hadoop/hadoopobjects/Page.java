@@ -50,7 +50,7 @@ public class Page implements WritableComparable<Page> {
     
     @Override
     public int hashCode() {
-        return this.title.hashCode() + this.pageRank.hashCode();
+        return this.title.hashCode() + new Double(this.pageRank).hashCode();
     }
     
     
