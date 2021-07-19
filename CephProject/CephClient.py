@@ -30,12 +30,12 @@ if __name__ == '__main__':
             printcommands()
 
         elif command == "ls":
-            r = requests.get("{}/files".format(url))
+            r = requests.get("{}/v1/files".format(url))
             print(r.text)
 
         elif command == "delete":
             filename = tokens[1]
-            r = requests.delete("{}/files/{}".format(url, filename))
+            r = requests.delete("{}/v1/files/{}".format(url, filename))
             print(r.text)
 
         elif command == "upload":
@@ -44,12 +44,12 @@ if __name__ == '__main__':
                 data = file.read(file)
             head, tail = os.path.split(filepath)
             content = {"content": data, "name": tail}
-            r = requests.post("{}/files".format(url), content=content)
+            r = requests.post("{}/v1/files".format(url), content=content)
             print(r.text)
 
         elif command == "download":
             filename = tokens[1]
-            r = requests.get("{}/files/{}".format(url, filename))
+            r = requests.get("{}/v1/files/{}".format(url, filename))
             if r.status_code == 200:
                 with open(filename, "wb") as file:
                     file.write(r.content)
@@ -58,10 +58,8 @@ if __name__ == '__main__':
                 print(r.text)
 
         elif command == "stats":
-            r = requests.get("{}/stats".format(url))
+            r = requests.get("{}/v1/stats".format(url))
             print(r.text)
 
         elif command == "exit":
             break
-
-
