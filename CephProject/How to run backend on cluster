@@ -7,6 +7,6 @@
    for us: machine 172.16.3.200  -->  lxc exec juju-f7b247-1-lxd-0 /bin/bash
            machine 172.16.3.198  -->  lxc exec juju-f7b247-2-lxd-1 /bin/bash
            machine 172.16.3.211  -->  lxc exec juju-f7b247-3-lxd-1 /bin/bash
-3) Put the code of the backend inside the container: lxc file push -r <direcoty> <containerName>/home/ubuntu/
+3) Put the code of the backend inside the container: lxc file push <FileName> <containerName>/home/ubuntu/
 4) Run python3 SCRIPT_NAME
          
