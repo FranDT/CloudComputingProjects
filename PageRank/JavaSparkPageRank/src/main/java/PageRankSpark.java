@@ -151,7 +151,7 @@ public class PageRankSpark {
          */
 
         JavaPairRDD<String, Double> result = titles_and_masses.mapToPair(x -> x.swap()).sortByKey(false).mapToPair(x -> x.swap());
-        result.saveAsTextFile(OUTPUT_PATH/"sort/");
+        result.saveAsTextFile(OUTPUT_PATH+"/sort/");
 
         sc.stop();
     }
