@@ -95,7 +95,7 @@ public class Sort {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
 
-        //job.setNumReduceTasks(5);
+        job.setNumReduceTasks(1);
 
         KeyValueTextInputFormat.addInputPath(job, new Path(input));
         FileOutputFormat.setOutputPath(job, new Path(outputDir + "/sort"));
