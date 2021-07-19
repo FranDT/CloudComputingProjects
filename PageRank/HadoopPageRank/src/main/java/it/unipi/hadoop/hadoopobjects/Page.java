@@ -66,7 +66,7 @@ public class Page implements WritableComparable<Page> {
     @Override
     public String toString() {
         return "Title:" + this.title + "\tRank:" + this.pageRank;
-
+    }
 
     @Override
     public int compareTo(Page target) {
