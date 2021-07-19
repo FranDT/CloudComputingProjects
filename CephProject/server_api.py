@@ -29,7 +29,7 @@ def upload_file():
     req = {'type': 'upload', 'file': {'name': file_name, 'content': file_content}}
     return server.processRequest(req)
 
-@app.route('/v1/statistics' , methods=['GET'])
+@app.route('/v1/stats' , methods=['GET'])
 def show_statistics():
     req = {'type': 'stats'}
     return server.processRequest(req)
