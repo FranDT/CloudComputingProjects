@@ -43,6 +43,7 @@ if __name__ == '__main__':
             file = open(filepath, 'rb')
             files = {'file': file}
             r = requests.post("{}/v1/files".format(url), files=files)
+            file.close()
             print(r.text)
 
         elif command == "download":
@@ -51,6 +52,7 @@ if __name__ == '__main__':
             if r.status_code == 200:
                 with open(filename, "wb") as file:
                     file.write(r.content)
+                    file.close()
                 print("File received successfully and saved in: {}".format(filename))
             else:
                 print(r.text)
