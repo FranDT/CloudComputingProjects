@@ -115,15 +115,15 @@ public class PageRankSpark {
 
             JavaPairRDD<String, Tuple2<Iterable<String>, Double>> complete_nodes = unique_nodes.join(titles_and_masses);
             complete_nodes.saveAsTextFile(OUTPUT_PATH+"/"+i);
-            final JavaRDD<Tuple2<Iterable<String>, Double>> outlink_nodes_with_mass = complete_nodes.values();
+            JavaRDD<Tuple2<Iterable<String>, Double>> outlink_nodes_with_mass = complete_nodes.values();
 
             JavaPairRDD<String, Double> outlink_masses = outlink_nodes_with_mass.flatMapToPair((PairFlatMapFunction<Tuple2<Iterable<String>, Double>, String, Double>)
                     myTuple -> {
 
                 List<Tuple2<String, Double>> ret = new ArrayList<>();
-                Double node_mass = myTuple._2;
+                Double node_mass = myTuple._2();
                 List<String> outlinks_list = new ArrayList<>();
-                for(String outlink : myTuple._1){
+                for(String outlink : myTuple._1()){
                     outlinks_list.add(outlink);
                 }
 
