@@ -9,11 +9,13 @@
         <module name="HadoopPageRank" />
         <module name="SparkPageRank" />
         <module name="CephProject" />
+        <module name="JavaSparkPageRank" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="CephProject" target="1.5" />
       <module name="HadoopPageRank" target="1.5" />
+      <module name="JavaSparkPageRank" target="8" />
       <module name="PageRank" target="1.5" />
       <module name="Projects" target="1.5" />
       <module name="SparkPageRank" target="1.5" />
