@@ -1,7 +1,8 @@
 # How To Run
 
 ## Running the backend
-first go to each vm and go the shell inside the container
+first go to each vm and go the shell inside the container.
+
 machine 172.16.3.200:
 ```
 lxc exec juju-f7b247-1-lxd-0 /bin/bash
