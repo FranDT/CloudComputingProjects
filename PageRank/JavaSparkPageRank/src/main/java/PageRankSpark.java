@@ -66,7 +66,6 @@ public class PageRankSpark {
             return myRDD.iterator();
         });
 
-        all_nodes.saveAsTextFile(OUTPUT_PATH);
         JavaPairRDD<String, Iterable<String>> unique_nodes = all_nodes.reduceByKey((Function2<Iterable<String>, Iterable<String>, Iterable<String>>) (outlinks1, outlinks2) -> {
             System.out.println("\n\n\n\n\nProva 4");
             List<String>  ret = new ArrayList<>();
