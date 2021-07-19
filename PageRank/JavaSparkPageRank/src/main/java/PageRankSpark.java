@@ -15,16 +15,16 @@ import java.util.regex.Pattern;
 public class PageRankSpark {
 
     public static void main(String[] args) {
-        if (args.length != 5) {
+        if (args.length != 4) {
             System.out.println("Error: wrong number of arguments. Please insert in order the path of the input file,\n" +
                     "the path for the outputs, the number of iterations and the value for alpha");
             System.exit(1);
         }
 
-        final String INPUT_PATH = args[1];
-        final String OUTPUT_PATH = args[2];
-        final int NUM_ITER = Integer.parseInt(args[3]);
-        final double ALPHA = Double.parseDouble(args[4]);
+        final String INPUT_PATH = args[0];
+        final String OUTPUT_PATH = args[1];
+        final int NUM_ITER = Integer.parseInt(args[2]);
+        final double ALPHA = Double.parseDouble(args[3]);
 
         final SparkConf sparkConf = new SparkConf().setMaster("yarn").setAppName("PageRank");
         final JavaSparkContext sc = new JavaSparkContext(sparkConf);
@@ -32,6 +32,7 @@ public class PageRankSpark {
         final JavaRDD<String> pages = sc.textFile(INPUT_PATH).cache();
 
         System.out.println("\n\n\n\n\n" + args[0]);
+        System.out.println("\n\n\n\n\n" + pages.toString());
 
         /**
          *
