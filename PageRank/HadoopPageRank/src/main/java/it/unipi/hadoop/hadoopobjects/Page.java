@@ -50,7 +50,7 @@ public class Page implements WritableComparable<Page> {
     
     @Override
     public int hashCode() {
-        return this.title.hashCode();
+        return this.title.hashCode() + this.pageRank.hashcode();
     }
     
     
@@ -69,9 +69,19 @@ public class Page implements WritableComparable<Page> {
     }
 
     @Override
-    public int compareTo(Page target) {
+    public int compareTo(Page o) {
+        long mis = (this.pageRank - o.getPageRank());
+        if(mis != 0 ){
+            return (int)mis;
+        }
+        else{
+            return this.getTitle().compareTo(o.getTitle);
+        }
+    }
+
+   /* public int compareTo(Page target) {
         double rank = target.getPageRank();
         String title = target.getTitle();
         return this.getPageRank() < rank ? 1 : (this.getPageRank() == rank ? this.getTitle().compareTo(title) : -1);
-    }
+    }*/
 }
