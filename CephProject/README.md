@@ -1,7 +1,7 @@
 # How To Run
 
 ## Running the backend
-for each vm used as openStack compute node, open the shell inside the container for ceph-mon.
+for each vm used as OpenStack compute node, open a shell inside the container for ceph-mon.
 
 for machine 172.16.3.200:
 ```
