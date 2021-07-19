@@ -26,7 +26,7 @@ def upload_file():
     file = request.files['content']
     file_name = request.files['name']
     file_content = file
-    req = {'type': 'upload', 'file': {'name': str(file_name), 'content': file_content}}
+    req = {'type': 'upload', 'file': {'name': str(file_name), 'content': bytes(file_content)}}
     return server.processRequest(req)
 
 @app.route('/v1/stats' , methods=['GET'])
