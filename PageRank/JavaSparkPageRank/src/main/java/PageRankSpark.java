@@ -31,7 +31,6 @@ public class PageRankSpark {
 
         final JavaRDD<String> pages = sc.textFile(INPUT_PATH).cache();
 
-        System.out.println("\n\n\n\n\n" + args[0]);
         System.out.println("\n\n\n\n\n" + pages.toString());
 
         /**
@@ -61,7 +60,7 @@ public class PageRankSpark {
                 for (int i = 0; i < arr.length; i++) {
                     if (arr[i].contains("]]") && !outlinks.contains(arr[i].substring(0, arr[i].indexOf("]]")))) {
                         outlinks.add(arr[i].substring(0, arr[i].indexOf("]]")));
-                        myRDD.add(new Tuple2<>(arr[i].substring(0, arr[i].indexOf("]]")), new ArrayList<String>()));
+                        myRDD.add(new Tuple2<>(arr[i].substring(0, arr[i].indexOf("]]")), new ArrayList<>()));
                     }
                 }
                 myRDD.add(new Tuple2<>(title, outlinks));
@@ -69,10 +68,10 @@ public class PageRankSpark {
             return myRDD.iterator();
         });
 
-        System.out.println("\n\n\n\nProva 3");
+        all_nodes.saveAsTextFile(OUTPUT_PATH);
         JavaPairRDD<String, Iterable<String>> unique_nodes = all_nodes.reduceByKey((Function2<Iterable<String>, Iterable<String>, Iterable<String>>) (outlinks1, outlinks2) -> {
             System.out.println("\n\n\n\n\nProva 4");
-            List<String>  ret = new ArrayList<String>();
+            List<String>  ret = new ArrayList<>();
 
             for(String link : outlinks1){
                 ret.add(link);
@@ -92,6 +91,8 @@ public class PageRankSpark {
          */
 
         final long pageNumber = unique_nodes.count();
+
+        System.out.println(pageNumber);
 
         /*
             Getting the list of titles to which we match the initial mass. This is then joined with the unique_nodes RDD to
