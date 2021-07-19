@@ -1,12 +1,16 @@
-1) On controller, run "juju status" to get the container ids of the ceph-mon instances.
-   For us: machine 172.16.3.200  --> juju-f7b247-1-lxd-0
-           machine 172.16.3.198  --> juju-f7b247-2-lxd-1
-           machine 172.16.3.211  --> juju-f7b247-3-lxd-1
 
-2) Go on each machine and run the command: lxc exec CONTAINER_ID /bin/bash
+1) On controller, run "juju status" to get the container ids of the ceph-mon instances.
+   For us: machine 172.16.3.200  --> juju-f7b247-1-lxd-0  (ip: 252.3.200.9)
+           machine 172.16.3.198  --> juju-f7b247-2-lxd-1  (ip: 252.3.198.183
+           machine 172.16.3.211  --> juju-f7b247-3-lxd-1  (ip: 252.3.211.113)
+
+2) Put the code of the backend inside the container: lxc file push <FileName> <containerName>/home/ubuntu/
+
+3) Go on each machine and run the command: lxc exec CONTAINER_ID /bin/bash
    for us: machine 172.16.3.200  -->  lxc exec juju-f7b247-1-lxd-0 /bin/bash
            machine 172.16.3.198  -->  lxc exec juju-f7b247-2-lxd-1 /bin/bash
            machine 172.16.3.211  -->  lxc exec juju-f7b247-3-lxd-1 /bin/bash
-3) Put the code of the backend inside the container: lxc file push <FileName> <containerName>/home/ubuntu/
-4) Run python3 SCRIPT_NAME
+           
+
+4) Run python3 server_api.py
          
