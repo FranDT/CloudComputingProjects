@@ -26,7 +26,7 @@ def chooseIP():
     with open(IPs) as f:
         lines = f.readlines()
     now = time.time()
-    return lines[hash(now)%len(lines)]
+    return lines[hash(now)%len(lines)].replace("\n", "")
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
