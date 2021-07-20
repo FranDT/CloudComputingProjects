@@ -54,14 +54,17 @@ public class PageRankSpark {
                 if (matcher.find()) {
                     title = matcher.group(1).replace("\t", "");
                 }
-                arr = page.split("\\[\\[");
-                for (int i = 0; i < arr.length; i++) {
-                    if (arr[i].contains("]]") && !outlinks.contains(arr[i].substring(0, arr[i].indexOf("]]")))) {
-                        outlinks.add(arr[i].substring(0, arr[i].indexOf("]]")));
-                        myRDD.add(new Tuple2<>(arr[i].substring(0, arr[i].indexOf("]]")), new ArrayList<>()));
+
+                pattern = Pattern.compile("\\[\\[(.*?)\\]\\]");
+                matcher = pattern.matcher(page);
+
+                while(matcher.find()) {
+                    String link = matcher.group(1).replace("\t", "");
+                    if(!outlinks.contains(link)) {
+                        outlinks.add(link);
+                        myRDD.add(new Tuple2<>(page, new ArrayList<>()));
                     }
                 }
-                myRDD.add(new Tuple2<>(title, outlinks));
             }
             return myRDD.iterator();
         });
