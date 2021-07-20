@@ -1,7 +1,7 @@
-package it.unipi.cc.pagerank.hadoop;
+package it.unipi.hadoop;
 
-import it.unipi.cc.pagerank.hadoop.serialize.Node;
-import it.unipi.cc.pagerank.hadoop.serialize.Page;
+import it.unipi.hadoop.hadoopobjects.Node;
+import it.unipi.hadoop.hadoopobjects.Page;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
@@ -95,3 +95,4 @@ public class Sort {
 
         return job.waitForCompletion(true);
     }
+}
