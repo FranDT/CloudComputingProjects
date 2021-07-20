@@ -41,8 +41,8 @@ public class Sort {
         // For each node, create a Page object and emit it
         @Override
         public void map(final Text key, final Text value, final Context context) throws IOException, InterruptedException {
-            node.setByJson(value.toString().split("\t")[1]);
-            reducerKey.set(value.toString().split("\t")[0], node.getPageRank());
+            node.setByJson(value.toString());
+            reducerKey.set(key.toString(), node.getPageRank());
             context.write(reducerKey, nullValue);
         }
     }
