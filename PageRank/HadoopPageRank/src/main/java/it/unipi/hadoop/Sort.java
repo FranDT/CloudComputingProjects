@@ -48,7 +48,7 @@ public class Sort {
         public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             node.setByJson(value.toString().split("\t")[1]);
             keyEmit.set(value.toString().split("\t")[0], node.getPageRank());
-            if(keyEmit.getTitle().contains("Special:DoubleRedirects"){
+            if(keyEmit.getTitle().contains("Special:DoubleRedirects")){
                 System.out.println("\n\n\n\nPageRank: "+keyEmit.getPageRank());
             }
             context.write(keyEmit, valueEmit);
