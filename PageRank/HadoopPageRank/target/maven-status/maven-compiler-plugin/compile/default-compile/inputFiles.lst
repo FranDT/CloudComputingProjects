@@ -2,9 +2,7 @@
 /home/ahmed/CloudComputingProjects/PageRank/HadoopPageRank/src/main/java/it/unipi/hadoop/Main.java
 /home/ahmed/CloudComputingProjects/PageRank/HadoopPageRank/src/main/java/it/unipi/hadoop/parser/Parser.java
 /home/ahmed/CloudComputingProjects/PageRank/HadoopPageRank/src/main/java/it/unipi/hadoop/Sort.java
-/home/ahmed/CloudComputingProjects/PageRank/HadoopPageRank/src/main/java/it/unipi/hadoop/toBeSaved/Sort.java
 /home/ahmed/CloudComputingProjects/PageRank/HadoopPageRank/src/main/java/it/unipi/hadoop/hadoopobjects/Page.java
 /home/ahmed/CloudComputingProjects/PageRank/HadoopPageRank/src/main/java/it/unipi/hadoop/Count.java
-/home/ahmed/CloudComputingProjects/PageRank/HadoopPageRank/src/main/java/it/unipi/hadoop/toBeSaved/Page.java
 /home/ahmed/CloudComputingProjects/PageRank/HadoopPageRank/src/main/java/it/unipi/hadoop/Parse.java
 /home/ahmed/CloudComputingProjects/PageRank/HadoopPageRank/src/main/java/it/unipi/hadoop/Rank.java
