@@ -4,28 +4,21 @@ import it.unipi.hadoop.hadoopobjects.Node;
 import it.unipi.hadoop.hadoopobjects.Page;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-<<<<<<< HEAD
 import org.apache.hadoop.io.*;
-=======
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
->>>>>>> b222e6c3fabacfef1e08ac2a93153a1c1201ae43
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-<<<<<<< HEAD
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-=======
 import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner;
 
->>>>>>> b222e6c3fabacfef1e08ac2a93153a1c1201ae43
 
 import java.io.IOException;
 
 public class Sort {
-<<<<<<< HEAD
     private static final String OUTPUT_PATH = "/sort";
     private String output;
 
@@ -140,7 +133,6 @@ public class Sort {
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
      */
-=======
     private static Sort singleton;
 
     private Sort() {}
@@ -227,5 +219,4 @@ public class Sort {
 
         return job.waitForCompletion(true);
     }
->>>>>>> b222e6c3fabacfef1e08ac2a93153a1c1201ae43
 }
