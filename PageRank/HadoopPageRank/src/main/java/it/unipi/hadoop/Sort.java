@@ -19,118 +19,93 @@ import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner;
 import java.io.IOException;
 
 public class Sort {
-    private static final String OUTPUT_PATH = "/sort";
-    private String output;
 
-    private static Sort instance = null;  // Singleton
+    private static Sort singleton = null;  // Singleton
 
     private Sort() { }
 
     public static Sort getSort()
     {
-        if (instance == null)
-            instance = new Sort();
+        if (singleton == null)
+            singleton = new Sort();
 
-        return instance;
+        return singleton;
     }
-
-    public String getOutputPath() { return output; }
 
 
     public static class SortMapper extends Mapper<Text, Text, Page, NullWritable> {
         private static final Node node = new Node();
-        private static final Page reducerKey = new Page();
+        private static final Page keyEmit = new Page();
         private static final NullWritable nullValue = NullWritable.get();
 
-        // For each node, create a Page object and emit it
+        /**
+         *
+         * The map phase is very simple, since we just take the information about each page, in particular its title and
+         * its pageRank, and we use a WritableComparable object called Page to automatically sort the pages exploiting the
+         * Shuffle and Sort phase of MapReduce. Thanks to that, we just need to emit the WritableComparable objects as keys
+         * and the reducer will receive the pages to be processed already ordered.
+         *
+         * @param key
+         * @param value
+         * @param context
+         * @throws IOException
+         * @throws InterruptedException
+         */
         @Override
         public void map(final Text key, final Text value, final Context context) throws IOException, InterruptedException {
             node.setByJson(value.toString());
-            reducerKey.set(key.toString(), node.getPageRank());
-            context.write(reducerKey, nullValue);
+            keyEmit.set(key.toString(), node.getPageRank());
+            context.write(keyEmit, nullValue);
         }
     }
 
 
     public static class SortReducer extends Reducer<Page, NullWritable, Text, DoubleWritable> {
         private static final Text title = new Text();
-        private static final DoubleWritable rank = new DoubleWritable();
+        private static final DoubleWritable pageRank = new DoubleWritable();
 
-        // Emit the already sorted list of pages (exploits of Shuffle & Sort phase)
+        /**
+         *
+         * The reduce function of the sort phase just takes the pages and emit their title and their rank.
+         *
+         * @param key
+         * @param values
+         * @param context
+         * @throws IOException
+         * @throws InterruptedException
+         */
         @Override
         public void reduce(final Page key, final Iterable<NullWritable> values, final Context context) throws IOException, InterruptedException {
             title.set(key.getTitle());
-            rank.set(key.getRank());
-            context.write(title, rank);
+            pageRank.set(key.getRank());
+            context.write(title, pageRank);
         }
     }
 
 
-    public boolean run(final String input, final String baseOutput) throws Exception {
-        this.output = baseOutput + OUTPUT_PATH;
-
-        // set configuration
+    public boolean run(final String input, final String outputDir) throws Exception {
         final Configuration conf = new Configuration();
-        conf.set("mapreduce.input.keyvaluelinerecordreader.key.value.separator", "\t"); // set \t as separator
+        conf.set("mapreduce.input.keyvaluelinerecordreader.key.value.separator", "\t");
 
-        // instantiate job
         final Job job = new Job(conf, "Sort");
         job.setJarByClass(Sort.class);
 
-        // set mapper/reducer
         job.setMapperClass(SortMapper.class);
         job.setReducerClass(SortReducer.class);
 
-        // define mapper's output key-value
         job.setMapOutputKeyClass(Page.class);
         job.setMapOutputValueClass(NullWritable.class);
 
-        // define reducer's output key-value
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
 
-        // define I/O
         KeyValueTextInputFormat.addInputPath(job, new Path(input));
-        FileOutputFormat.setOutputPath(job, new Path(this.output));
+        FileOutputFormat.setOutputPath(job, new Path(outputDir + "/sort"));
 
-        // define input/output format
         job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
         return job.waitForCompletion(true);
     }
 
-    /*
-    public static void main(final String[] args) throws Exception {
-        // set configuration
-        final Configuration conf = new Configuration();
-        conf.set("mapreduce.input.keyvaluelinerecordreader.key.value.separator", "\t"); // set \t as separator
-
-        // instantiate job
-        final Job job = new Job(conf, "Sort");
-        job.setJarByClass(Sort.class);
-
-        // set mapper/reducer
-        job.setMapperClass(SortMapper.class);
-        job.setReducerClass(SortReducer.class);
-
-        // define mapper's output key-value
-        job.setMapOutputKeyClass(Page.class);
-        job.setMapOutputValueClass(NullWritable.class);
-
-        // define reducer's output key-value
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(DoubleWritable.class);
-
-        // define I/O
-        KeyValueTextInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
-
-        // define input/output format
-        job.setInputFormatClass(KeyValueTextInputFormat.class);
-        job.setOutputFormatClass(TextOutputFormat.class);
-
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
-    }
-     */
 }

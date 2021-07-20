@@ -11,15 +11,12 @@ public class Page implements WritableComparable<Page> {
     private String title;
     private double rank;
 
-    //-------------------------------------------------------------------------------
 
     public Page() { }
 
     public Page(final String title, final double rank) {
         set(title, rank);
     }
-
-    //-------------------------------------------------------------------------------
 
     public void setTitle(final String title) { this.title = title; }
 
@@ -30,7 +27,7 @@ public class Page implements WritableComparable<Page> {
         setRank(rank);
     }
 
-    public void setFromJson(final String json) {
+    public void setByJson(final String json) {
         Page fromJson = new Gson().fromJson(json, Page.class);
         set(fromJson.getTitle(), fromJson.getRank());
     }
@@ -39,23 +36,15 @@ public class Page implements WritableComparable<Page> {
 
     public double getRank() { return this.rank; }
 
-    //-------------------------------------------------------------------------------
-
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeUTF(this.title);
         out.writeDouble(this.rank);
     }
 
-    @Override
     public void readFields(DataInput in) throws IOException {
         this.title = in.readUTF();
         this.rank = in.readDouble();
     }
-
-    //-------------------------------------------------------------------------------
-
-    public String toHumanString() { return "[Title: " + title + "]\t" + rank; }
 
     @Override
     public String toString() {
@@ -64,33 +53,27 @@ public class Page implements WritableComparable<Page> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
+    public boolean equals(Object obj) {
+        if(obj instanceof Page){
+            Page o = (Page)obj;
+            return this.title.equals(o.getTitle()) && this.rank == o.getRank();
         }
-
-        if (!(o instanceof Page)) {
-            return false;
-        }
-
-        Page that = (Page) o;
-        return that.getTitle().equals(this.title)
-                && this.rank == that.getRank();
+        return false;
     }
 
     @Override
     public int hashCode() { return this.title.hashCode(); }
 
-    @Override
-    public int compareTo(Page that) {
-        double thatRank = that.getRank();
-        String thatTitle = that.getTitle();
-        return this.rank < thatRank ? 1 : (this.rank == thatRank ? this.title.compareTo(thatTitle) : -1);
+    public int compareTo(Page o) {
+        double mis = (this.rank - o.getRank());
+        if(mis > 0 ){
+            return 1;
+        } else if (mis < 0){
+            return -1;
+        }
+        else{
+            return this.getTitle().compareTo(o.getTitle());
+        }
     }
-    
-   /* public int compareTo(Page target) {
-        double rank = target.getPageRank();
-        String title = target.getTitle();
-        return this.getPageRank() < rank ? 1 : (this.getPageRank() == rank ? this.getTitle().compareTo(title) : -1);
-    }*/
+
 }
