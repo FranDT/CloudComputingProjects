@@ -48,9 +48,9 @@ public class Sort {
         public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             node.setByJson(value.toString().split("\t")[1]);
             keyEmit.set(value.toString().split("\t")[0], node.getPageRank());
-            System.out.println("\n\n\n\n\n\n" + value.toString());
-            System.out.println(keyEmit.getTitle());
-            System.out.println(keyEmit.getPageRank());
+            if(keyEmit.getTitle().contains("Special:DoubleRedirects"){
+                System.out.println("\n\n\n\nPageRank: "+keyEmit.getPageRank());
+            }
             context.write(keyEmit, valueEmit);
         }
     }
@@ -74,7 +74,7 @@ public class Sort {
             valueEmit.set(key.getPageRank());
             System.out.println("\n\n\n\n\n\n" + keyEmit.toString());
             System.out.println(valueEmit.toString());
-            context.write(new Text(key.getTitle()), new DoubleWritable(key.getPageRank()));
+            context.write(keyEmit, valueEmit);
         }
     }
 
@@ -86,7 +86,6 @@ public class Sort {
         job.setJarByClass(Sort.class);
         
         job.setMapperClass(SortMapper.class);
-        job.setPartitionerClass(HashPartitioner.class);
         job.setReducerClass(SortReducer.class);
 
         job.setMapOutputKeyClass(Page.class);
