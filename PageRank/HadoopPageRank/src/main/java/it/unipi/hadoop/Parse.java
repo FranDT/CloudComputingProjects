@@ -26,7 +26,7 @@ public class Parse {
         return singleton;
     }
 
-    public static class ParseMapper extends Mapper<Object, Text, Text, Text> {
+    public static class ParseMapper extends Mapper<LongWritable, Text, Text, Text> {
         private static Text keyEmit = new Text();
         private static Text valueEmit = new Text();
         private static Parser parser = new Parser();
@@ -48,7 +48,7 @@ public class Parse {
          * @throws IOException
          * @throws InterruptedException
          */
-        public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
+        public void map(final LongWritable key, final Text value, Context context) throws IOException, InterruptedException{
             title = parser.getTitle(value.toString());
             outlinks = parser.getOulinks(value.toString());
 
@@ -151,6 +151,9 @@ public class Parse {
 
         FileInputFormat.addInputPath(job, new Path(input));
         FileOutputFormat.setOutputPath(job, new Path(outputDir + "/parse"));
+        
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
 
         return job.waitForCompletion(true);
     }
