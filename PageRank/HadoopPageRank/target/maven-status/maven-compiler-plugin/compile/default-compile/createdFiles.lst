@@ -6,6 +6,7 @@ it/unipi/hadoop/Main.class
 it/unipi/hadoop/Count$CountMapper.class
 it/unipi/hadoop/Count$CountReducer.class
 it/unipi/hadoop/Sort$SortReducer.class
+it/unipi/hadoop/Rank$RankCombiner.class
 it/unipi/hadoop/Parse$ParseMapper.class
 it/unipi/hadoop/Count.class
 it/unipi/hadoop/Rank.class

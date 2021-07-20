@@ -1,5 +1,6 @@
 from pyspark import SparkContext
 import sys
+import re
 
 def createAdjElement(line):
     start = "<title>"
@@ -10,11 +11,14 @@ def createAdjElement(line):
     key = line[line.find(start)+len(start):line.rfind(end)]
     links = []
     parts = line.split(linkStartDelim)
+    links = re.findall("\\[\\[(.*?)\\]\\]", line)
+    """
     for i in range(1, len(parts)):
         part = parts[i]
         value = part[0:part.find(linkEndDelim)]
         links.append(value)
     links = list(dict.fromkeys(links))
+    """
     return (key, links)
 
 
@@ -47,12 +51,18 @@ if __name__ == "__main__":
     rdd = sc.textFile(inputFile)
 
     #Create Adjacency list as a map
-    mapped = rdd.map(createAdjElement)
+    mapped = rdd.map(createAdjElement).cache()
 
     #Count the number of distinct nodes in the graph
-    pages = mapped.map(lambda rec: rec[0]).distinct().count()
-    outlinks = mapped.flatMap(lambda rec: rec[1]).distinct().count()
-    N = pages + outlinks
+    pages = mapped.map(lambda rec: rec[0]).distinct()
+    print(pages.count())
+    outlinks = mapped.flatMap(lambda rec: rec[1]).distinct()
+    N = pages.union(outlinks).distinct().count()
+    #N = pages + outlinks
+
+    print("N is")
+    print(N)
+    print("\n\n\n\n")
     
     #Append the initial page rank to the adjacency list
     pageRanks = mapped.map(lambda rec: (rec[0], rec[1], 1/N))
@@ -60,7 +70,7 @@ if __name__ == "__main__":
     #Perform the initial MapReduce to compute the ranks
     flattenedContributions = pageRanks.flatMap(lambda rec: mainMap(rec))
     summedContributions = flattenedContributions.reduceByKey(lambda x, y: x + y)
-    pageRanks = summedContributions.mapValues(lambda s: (float(1 - alpha) / N) +(alpha * float(s)))
+    pageRanks = summedContributions.mapValues(lambda s: (alpha / N) +(float(1-alpha) * s))
 
     #Further MapReduce iterations
     for i in range (1, maxIter-1):
@@ -68,7 +78,7 @@ if __name__ == "__main__":
         pageRanks = joined.map(lambda rec: (rec[0], rec[1][0], rec[1][1]))
         flattenedContributions = pageRanks.flatMap(lambda rec: mainMap(rec))
         summedContributions = flattenedContributions.reduceByKey(lambda x, y: x + y)
-        pageRanks = summedContributions.mapValues(lambda s: (float(1 - alpha) / N) +(alpha * float(s)))
+        pageRanks = summedContributions.mapValues(lambda s: (alpha / N) +(float(1-alpha) * s))
 
     sorted_page_ranks = pageRanks.sortBy(lambda page: page[1], ascending=False, numPartitions=1)
 
