@@ -1,9 +1,6 @@
 package it.unipi.hadoop.hadoopobjects;
 
-<<<<<<< HEAD
 import com.google.gson.Gson;
-=======
->>>>>>> b222e6c3fabacfef1e08ac2a93153a1c1201ae43
 import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
@@ -11,7 +8,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class Page implements WritableComparable<Page> {
-<<<<<<< HEAD
     private String title;
     private double rank;
 
@@ -91,7 +87,6 @@ public class Page implements WritableComparable<Page> {
         String thatTitle = that.getTitle();
         return this.rank < thatRank ? 1 : (this.rank == thatRank ? this.title.compareTo(thatTitle) : -1);
     }
-=======
     private static double pageRank;
     private static String title;
 
@@ -168,5 +163,4 @@ public class Page implements WritableComparable<Page> {
         String title = target.getTitle();
         return this.getPageRank() < rank ? 1 : (this.getPageRank() == rank ? this.getTitle().compareTo(title) : -1);
     }*/
->>>>>>> b222e6c3fabacfef1e08ac2a93153a1c1201ae43
 }
