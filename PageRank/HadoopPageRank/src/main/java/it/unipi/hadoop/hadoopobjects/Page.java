@@ -35,50 +35,56 @@ public class Page implements WritableComparable<Page> {
     public double getPageRank(){
         return pageRank;
     }
+    
+    public void setByJson(final String json) {
+        Page fromJson = new Gson().fromJson(json, Page.class);
+        set(fromJson.getTitle(), fromJson.getRank());
+    }
 
     @Override
     public void write(DataOutput out) throws IOException {
-        out.writeUTF(title);
-        out.writeDouble(pageRank);
+        out.writeUTF(this.title);
+        out.writeDouble(this.pageRank);
     }
     
     @Override
     public void readFields(DataInput in) throws IOException {
-        title = in.readUTF();
-        pageRank = in.readDouble();
+        this.title = in.readUTF();
+        this.pageRank = in.readDouble();
     }
     
     @Override
     public int hashCode() {
-        return this.title.hashCode() + new Double(this.pageRank).hashCode();
+        return this.title.hashCode();
     }
     
     
     @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof Page){
-            Page o = (Page)obj;
-            return this.title.equals(o.getTitle()) && this.pageRank == o.getPageRank();
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
         }
-        return false;
+
+        if (!(o instanceof Page)) {
+            return false;
+        }
+
+        Page that = (Page) o;
+        return that.getTitle().equals(this.title)
+                && this.rank == that.getRank();
     }
     
     @Override
     public String toString() {
-        return "Title:" + this.title + "\tRank:" + this.pageRank;
+        String json = new Gson().toJson(this);
+        return json;
     }
 
     @Override
-    public int compareTo(Page o) {
-        double mis = (this.pageRank - o.getPageRank());
-        if(mis > 0 ){
-            return 1;
-        } else if (mis < 0){
-            return -1;   
-        }
-        else{
-            return this.getTitle().compareTo(o.getTitle());
-        }
+    public int compareTo(Page that) {
+        double thatRank = that.getRank();
+        String thatTitle = that.getTitle();
+        return this.rank < thatRank ? 1 : (this.rank == thatRank ? this.title.compareTo(thatTitle) : -1);
     }
 
    /* public int compareTo(Page target) {
