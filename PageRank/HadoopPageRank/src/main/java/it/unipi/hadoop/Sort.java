@@ -84,7 +84,7 @@ public class Sort {
         conf.set("mapreduce.input.keyvaluelinerecordreader.key.value.separator", "\t");
 
         job.setJarByClass(Sort.class);
-        
+        job.setSortComparatorClass(Page.class)
         job.setMapperClass(SortMapper.class);
         job.setReducerClass(SortReducer.class);
 
