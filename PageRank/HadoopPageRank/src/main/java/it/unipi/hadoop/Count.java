@@ -56,7 +56,7 @@ public class Count {
                 keyEmit.set(title);
                 context.write(keyEmit, one);
 
-                if (outlinks != null) {
+                if (outlinks.size() > 0) {
                     for (String s : outlinks) {
                         keyEmit.set(s);
                         context.write(keyEmit, one);

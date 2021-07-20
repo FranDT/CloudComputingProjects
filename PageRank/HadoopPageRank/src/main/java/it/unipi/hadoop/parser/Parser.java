@@ -23,9 +23,7 @@ public class Parser {
         List<String> outlinks = new LinkedList<String>();
 
         try {
-            //String line;
             String[] arr;
-            //BufferedReader bufferedReader = new BufferedReader(new FileReader(fileToSearch));
             arr = fileToSearch.split("\\[\\[");
             for (int i = 0; i < arr.length; i++) {
                 if (arr[i].contains("]]")) {

@@ -59,7 +59,7 @@ public class Parse {
             if(title != null) {
                 keyEmit.set(title);
 
-                if (outlinks != null) {
+                if (outlinks.size() > 0) {
                     for (String s : outlinks) {
                         valueEmit.set(s);
                         context.write(keyEmit, valueEmit);

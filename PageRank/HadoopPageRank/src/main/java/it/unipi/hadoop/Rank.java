@@ -53,12 +53,11 @@ public class Rank {
         public void map(final Text key, final Text value, Context context) throws IOException, InterruptedException{
             keyEmit.set(key.toString()/*.split("\t")[0]*/);
             nodeEmit.setByJson(value.toString()/*.split("\t")[1]*/);
+            context.write(keyEmit, nodeEmit);
 
             mass = nodeEmit.getPageRank()/nodeEmit.getAdjacencyList().size();
-
             //nodeEmit.setPageRank(0.0);
             outlinks = nodeEmit.getAdjacencyList();
-            context.write(keyEmit, nodeEmit);
 
             nodeEmit.setIsNode(false);
             nodeEmit.setAdjacencyList(new LinkedList<String>());
