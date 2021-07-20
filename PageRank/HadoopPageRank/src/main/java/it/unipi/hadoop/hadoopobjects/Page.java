@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class Page implements WritableComparable<Page> {
     private String title;
-    private double rank;
+    private double pageRank;
 
 
     public Page() { }
@@ -20,30 +20,30 @@ public class Page implements WritableComparable<Page> {
 
     public void setTitle(final String title) { this.title = title; }
 
-    public void setRank(final double rank) { this.rank = rank; }
+    public void setPageRank(final double rank) { this.pageRank = rank; }
 
     public void set(final String title, final double rank) {
         setTitle(title);
-        setRank(rank);
+        setPageRank(rank);
     }
 
     public void setByJson(final String json) {
         Page fromJson = new Gson().fromJson(json, Page.class);
-        set(fromJson.getTitle(), fromJson.getRank());
+        set(fromJson.getTitle(), fromJson.getPageRank());
     }
 
     public String getTitle() { return this.title; }
 
-    public double getRank() { return this.rank; }
+    public double getPageRank() { return this.pageRank; }
 
     public void write(DataOutput out) throws IOException {
         out.writeUTF(this.title);
-        out.writeDouble(this.rank);
+        out.writeDouble(this.pageRank);
     }
 
     public void readFields(DataInput in) throws IOException {
         this.title = in.readUTF();
-        this.rank = in.readDouble();
+        this.pageRank = in.readDouble();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Page implements WritableComparable<Page> {
     public boolean equals(Object obj) {
         if(obj instanceof Page){
             Page o = (Page)obj;
-            return this.title.equals(o.getTitle()) && this.rank == o.getRank();
+            return this.title.equals(o.getTitle()) && this.pageRank == o.getPageRank();
         }
         return false;
     }
@@ -65,7 +65,7 @@ public class Page implements WritableComparable<Page> {
     public int hashCode() { return this.title.hashCode(); }
 
     public int compareTo(Page o) {
-        double mis = (o.getRank() - this.rank);
+        double mis = (o.getPageRank() - this.pageRank);
         if(mis > 0 ){
             return 1;
         } else if (mis < 0){

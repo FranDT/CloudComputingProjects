@@ -2,175 +2,159 @@ package it.unipi.hadoop;
 
 import it.unipi.hadoop.hadoopobjects.Node;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
+
+
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Rank {
-    private static final String OUTPUT_PATH = "/rank";
-    private String output;
+    private static Rank singleton;
 
-    private static Rank instance = null;  // Singleton
+    private Rank() {}
 
-    private Rank() {
+    public static Rank getRank(){
+        if(singleton == null)
+            singleton = new Rank();
+        return singleton;
     }
 
-    public static Rank getRank() {
-        if (instance == null)
-            instance = new Rank();
+    public static class RankMapper extends Mapper<Text, Text, Text, Node>{
+        private static final Text keyEmit = new Text();
+        private static final Node nodeEmit = new Node();
 
-        return instance;
-    }
-
-    public String getOutputPath() {
-        return output;
-    }
-
-
-    public static class RankMapper extends Mapper<Text, Text, Text, Node> {
-        private static final Text reducerKey = new Text();
-        private static final Node reducerValue = new Node();
-        private static final List<String> empty = new LinkedList<String>();
-
-        private static List<String> outLinks;
         private static double mass;
+        private static List<String> outlinks = new LinkedList<String>();
 
-        // For each line of the input (page title and its node features)
-        // (1) emit page title and its node features to maintain the graph structure
-        // (2) emit out-link pages with their mass (rank share)
-        @Override
-        public void map(final Text key, final Text value, final Context context) throws IOException, InterruptedException {
-            reducerKey.set(key.toString());
-            reducerValue.setByJson(value.toString());
-            context.write(reducerKey, reducerValue); // (1)
+        /**
+         *
+         * In this map phase, we first of all retrieve the node information from the input value, using Json to standardize
+         * and facilitate the retrieval of data. Then, we emit the title of the page and the node information, in particular
+         * we will emit a node object in which we're only interested about the outlinks (we emit the whole node because this
+         * allows to emit in the same mapper both a list of Strings and an integer value corresponding to the mass later on).
+         * After that, we calculate the contribution of the node for each outlink and we send that value on each outlink:
+         * in this reducer, we will understand how to handle the two different semantics for Node thanks to the isNode boolean
+         * field of the Node object.
+         *
+         * @param key
+         * @param value
+         * @param context
+         * @throws IOException
+         * @throws InterruptedException
+         */
+        public void map(final Text key, final Text value, Context context) throws IOException, InterruptedException{
+            keyEmit.set(key.toString()/*.split("\t")[0]*/);
+            nodeEmit.setByJson(value.toString()/*.split("\t")[1]*/);
+            context.write(keyEmit, nodeEmit);
 
-            outLinks = reducerValue.getAdjacencyList();
-            mass = reducerValue.getPageRank() / outLinks.size();
+            mass = nodeEmit.getPageRank()/nodeEmit.getAdjacencyList().size();
+            outlinks = nodeEmit.getAdjacencyList();
 
-            reducerValue.setAdjacencyList(empty);
-            reducerValue.setIsNode(false);
-            for (String outLink : outLinks) {
-                reducerKey.set(outLink);
-                reducerValue.setPageRank(mass);
-                context.write(reducerKey, reducerValue); // (2)
+            nodeEmit.setIsNode(false);
+            nodeEmit.setAdjacencyList(new LinkedList<String>());
+            for(String outlink : outlinks){
+                keyEmit.set(outlink);
+                nodeEmit.setPageRank(mass);
+                context.write(keyEmit, nodeEmit);
             }
         }
     }
 
-
-    public static class RankCombiner extends Reducer<Text, Node, Text, Node> {
-        private static final Node outValue = new Node();
-        private static final List<String> empty = new LinkedList<String>();
-
-        private static double aggregatedRank;
-
-        // For each key
-        // (1) pass along the graph-structure
-        // (2) sum up the entrant rank values and emit the aggregate
-        @Override
-        public void reduce(Text key, Iterable<Node> values, Context context) throws IOException, InterruptedException {
-            aggregatedRank = 0.0;
-            outValue.setAdjacencyList(empty);
-            outValue.setIsNode(false);
-
-            for (Node p : values) {
-                if (p.getIsNode())
-                    context.write(key, p); // (1)
-                else
-                    aggregatedRank += p.getPageRank();
-            }
-            outValue.setPageRank(aggregatedRank);
-            context.write(key, outValue); // (2)
-        }
-    }
-
-
-    public static class RankReducer extends Reducer<Text, Node, Text, Node> {
-        private double alpha;
-        private int pageCount;
-        private static final Node outValue = new Node();
-        private static final List<String> empty = new LinkedList<String>();
+    public static class RankReducer extends Reducer<Text, Node, Text, Node>{
+        private static final Node nodeEmit = new Node();
+        private static double alpha;
+        private static int pageNumber;
 
         private static double rank;
-        private static double newPageRank;
 
-        @Override
-        public void setup(Context context) throws IOException, InterruptedException {
-            this.alpha = context.getConfiguration().getDouble("alpha", 0);
-            this.pageCount = context.getConfiguration().getInt("page.count", 0);
+        /**
+         *
+         * As in the parse reducer, we use the setup method to get the value of alpha and the number of pages.
+         *
+         * @param context
+         * @throws IOException
+         * @throws InterruptedException
+         */
+        public void setup(Context context) throws IOException, InterruptedException{
+            alpha = context.getConfiguration().getDouble("alpha", 0.0);
+            pageNumber = context.getConfiguration().getInt("page.number", 0);
         }
 
-        // For each node associated to a page
-        // (1) if it is a complete node, recover the graph structure from it
-        // (2) else, get from it an incoming rank contribution
-        @Override
-        public void reduce(Text key, Iterable<Node> values, Context context) throws IOException, InterruptedException {
+        /**
+         *
+         * In the reduce method, we start using a rank equal to zero. From the list of nodes we obtained for that page,
+         * we check node by node if it corresponds to a contribution through an outlink (case isNode = false) or if it's
+         * the propagation of the structure (isNode = true): in the first case, we add the contribution to the rank; in the
+         * second case, we recreate the structure of the node. After analyzing the whole list, we set the new page rank
+         * according to the given formula: note that, in case a node doesn't have any incoming links, the list values will
+         * only contain a single Node that is the one used for the propagation of the structure. That node will be assigned
+         * a newPageRank equal to alpha/pageNumber, that is a default value for dangling nodes. Finally, we emit the title
+         * and the updated node information to be used in the following iteration.
+         *
+         * @param key
+         * @param values
+         * @param context
+         * @throws IOException
+         * @throws InterruptedException
+         */
+        public void reduce(final Text key, final Iterable<Node> values, Context context) throws IOException, InterruptedException{
             rank = 0.0;
-            outValue.setAdjacencyList(empty);
-            outValue.setIsNode(false);
-
-            for (Node p : values) {
-                if (p.getIsNode())
-                    outValue.set(p);  // (1)
-                else
-                    rank += p.getPageRank(); // (2)
+                       
+            for(Node n : values){
+                if(!n.getIsNode()) {
+                    rank += n.getPageRank();
+                }
+                else{
+                    nodeEmit.set(n);
+                }
             }
-            newPageRank = (this.alpha / ((double) this.pageCount)) + ((1 - this.alpha) * rank);
-            outValue.setPageRank(newPageRank);
-            context.write(key, outValue);
+
+            nodeEmit.setPageRank( (alpha / ((double)pageNumber)) + ((1.0 - alpha) * rank) );
+            context.write(key, nodeEmit);
         }
     }
 
-
-    public boolean run(final String input,
-                       final String baseOutput,
-                       final double alpha,
-                       final int pageCount,
-                       final int iteration) throws Exception {
-
-
-        // set configurations
+    public static boolean run(final String input, final String outputDir, final double alpha, final int pageNumber, final int iteration) throws Exception {
         final Configuration conf = new Configuration();
-        conf.set("mapreduce.input.keyvaluelinerecordreader.key.value.separator", "\t"); // set \t as separator
+        final Job job = Job.getInstance(conf, "rank-" + iteration);
 
-        // instantiate job
-        final Job job = new Job(conf, "Rank-" + iteration);
+        /*
+            Here we will have to specify which is the separator used in each line of the input file, so that we can
+            divide in the map phase the key and the value.
+         */
+        conf.set("mapreduce.input.keyvaluelinerecordreader.key.value.separator", "\t");
+
         job.setJarByClass(Rank.class);
 
-        // set mapper/combiner/reducer
         job.setMapperClass(RankMapper.class);
-        job.setCombinerClass(RankCombiner.class);
         job.setReducerClass(RankReducer.class);
 
-        // define mapper's output key-value
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Node.class);
 
-        // define reducer's output key-value
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Node.class);
 
-        // set the random jump probability alpha and the page count
         job.getConfiguration().setDouble("alpha", alpha);
-        job.getConfiguration().setInt("page.count", pageCount);
+        job.getConfiguration().setInt("page.number", pageNumber);
 
-        // set number of reducer tasks to be used
-        //job.setNumReduceTasks(numReducers);
+        //job.setNumReduceTasks(5);
 
-        // define I/O
+        /*
+            Here we use the KeyValueTextInputFormat, that is an extended version of TextInputFormat, which is useful for us
+            since each record is formed by a Text/Text pair to be splitted in key and value.
+         */
         KeyValueTextInputFormat.addInputPath(job, new Path(input));
-        FileOutputFormat.setOutputPath(job, new Path(baseOutput + "/rank-" + iteration));
-
-        // define input/output format
+        FileOutputFormat.setOutputPath(job, new Path(outputDir + "/rank-" + iteration));
+        
         job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 

@@ -77,7 +77,7 @@ public class Sort {
         @Override
         public void reduce(final Page key, final Iterable<NullWritable> values, final Context context) throws IOException, InterruptedException {
             title.set(key.getTitle());
-            pageRank.set(key.getRank());
+            pageRank.set(key.getPageRank());
             context.write(title, pageRank);
         }
     }
