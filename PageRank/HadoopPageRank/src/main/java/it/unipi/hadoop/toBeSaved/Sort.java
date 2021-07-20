@@ -1,4 +1,4 @@
-package it.unipi.hadoop;
+/*package it.unipi.hadoop;
 
 import it.unipi.hadoop.hadoopobjects.Node;
 import it.unipi.hadoop.hadoopobjects.Page;
@@ -44,7 +44,7 @@ public class Sort {
          * @param context
          * @throws IOException
          * @throws InterruptedException
-         */
+         
         public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
             node.setByJson(value.toString().split("\t")[1]);
             keyEmit.set(value.toString().split("\t")[0], node.getPageRank());
@@ -68,7 +68,7 @@ public class Sort {
          * @param context
          * @throws IOException
          * @throws InterruptedException
-         */
+         
         public void reduce(final Page key, final Iterable<Text> values, Context context) throws IOException, InterruptedException{
             keyEmit.set(key.getTitle());
             valueEmit.set(key.getPageRank());
@@ -103,4 +103,4 @@ public class Sort {
 
         return job.waitForCompletion(true);
     }
-}
+}*/
