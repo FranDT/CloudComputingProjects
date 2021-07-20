@@ -146,7 +146,7 @@ public class Rank {
         job.getConfiguration().setDouble("alpha", alpha);
         job.getConfiguration().setInt("page.number", pageNumber);
 
-        //job.setNumReduceTasks(5);
+        job.setNumReduceTasks(5);
 
         /*
             Here we use the KeyValueTextInputFormat, that is an extended version of TextInputFormat, which is useful for us
