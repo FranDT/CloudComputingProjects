@@ -65,7 +65,7 @@ public class Page implements WritableComparable<Page> {
     public int hashCode() { return this.title.hashCode(); }
 
     public int compareTo(Page o) {
-        double mis = (this.rank - o.getRank());
+        double mis = (o.getRank() - this.rank);
         if(mis > 0 ){
             return 1;
         } else if (mis < 0){

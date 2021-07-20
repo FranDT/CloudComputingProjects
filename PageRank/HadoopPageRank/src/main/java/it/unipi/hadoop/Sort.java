@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class Sort {
 
-    private static Sort singleton = null;  // Singleton
+    private static Sort singleton = null;
 
     private Sort() { }
 
