@@ -122,7 +122,7 @@ public class Rank {
         }
     }
 
-    public static boolean run(final String input, final String outputDir, final double alpha, final int pageNumber, final int iteration) throws Exception {
+    public static boolean run(final String input, final String outputDir, final double alpha, final int pageNumber, final int iteration, final int num_reducers) throws Exception {
         final Configuration conf = new Configuration();
         final Job job = Job.getInstance(conf, "rank-" + iteration);
 
@@ -146,7 +146,7 @@ public class Rank {
         job.getConfiguration().setDouble("alpha", alpha);
         job.getConfiguration().setInt("page.number", pageNumber);
 
-        job.setNumReduceTasks(5);
+        job.setNumReduceTasks(num_reducers);
 
         /*
             Here we use the KeyValueTextInputFormat, that is an extended version of TextInputFormat, which is useful for us

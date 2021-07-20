@@ -122,7 +122,7 @@ public class Parse {
         }
     }
 
-    public static boolean run(final String input, final String outputDir, final int pageNumber) throws Exception {
+    public static boolean run(final String input, final String outputDir, final int pageNumber, final int numReducers) throws Exception {
         final Configuration conf = new Configuration();
         final Job job = Job.getInstance(conf, "parse");
 
@@ -151,7 +151,7 @@ public class Parse {
         /*
             Sets the number of reducers to be used for the MapReduce job.
          */
-        job.setNumReduceTasks(5);
+        job.setNumReduceTasks(numReducers);
 
         FileInputFormat.addInputPath(job, new Path(input));
         FileOutputFormat.setOutputPath(job, new Path(outputDir + "/parse"));

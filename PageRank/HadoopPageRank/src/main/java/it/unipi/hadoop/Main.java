@@ -6,9 +6,9 @@ import java.sql.Timestamp;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        if(args.length != 4){
+        if(args.length != 5){
             System.out.println("Error: wrong number of arguments. Please insert in order the path of the input file,\n" +
-                    "the path for the outputs, the number of iterations and the value for alpha");
+                    "the path for the outputs, the number of iterations, the value for alpha and the number of reducers");
             System.exit(1);
         }
 
@@ -17,6 +17,7 @@ public class Main {
         final String OUTPUTS_PATH = args[1];
         final int NUM_ITER = Integer.parseInt(args[2]);
         final double ALPHA = Double.parseDouble(args[3]);
+        final int NUM_REDUCERS = Integer.parseInt(args[4]);
 
         final Timestamp startingTime = new Timestamp(System.currentTimeMillis());
 
@@ -47,7 +48,7 @@ public class Main {
          * page rank and the list of outlinks.
          *
          */
-        if(!Parse.getParse().run(INPUT_PATH, OUTPUTS_PATH, pageNumber)){
+        if(!Parse.getParse().run(INPUT_PATH, OUTPUTS_PATH, pageNumber, NUM_REDUCERS)){
             System.out.println("An error occurred during the execution of the parsing and node creation phase");
             System.exit(1);
         }
@@ -65,7 +66,7 @@ public class Main {
          */
         String nextIterationSet = OUTPUTS_PATH + "/parse";
         for(int i = 0; i < NUM_ITER; i++){
-            if(!Rank.getRank().run(nextIterationSet, OUTPUTS_PATH, ALPHA, pageNumber, i)){
+            if(!Rank.getRank().run(nextIterationSet, OUTPUTS_PATH, ALPHA, pageNumber, i, NUM_REDUCERS)){
                 System.out.println("An error occurred during the execution of the ranking phase");
                 System.exit(1);
             }
