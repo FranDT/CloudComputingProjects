@@ -38,7 +38,7 @@ public class Page implements WritableComparable<Page> {
     
     public void setByJson(final String json) {
         Page fromJson = new Gson().fromJson(json, Page.class);
-        set(fromJson.getTitle(), fromJson.getRank());
+        set(fromJson.getTitle(), fromJson.getPageRank());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class Page implements WritableComparable<Page> {
 
         Page that = (Page) o;
         return that.getTitle().equals(this.title)
-                && this.rank == that.getRank();
+                && this.pageRank == that.getPageRank();
     }
     
     @Override
@@ -82,9 +82,9 @@ public class Page implements WritableComparable<Page> {
 
     @Override
     public int compareTo(Page that) {
-        double thatRank = that.getRank();
+        double thatRank = that.getPageRank();
         String thatTitle = that.getTitle();
-        return this.rank < thatRank ? 1 : (this.rank == thatRank ? this.title.compareTo(thatTitle) : -1);
+        return this.pageRank < thatRank ? 1 : (this.pageRank == thatRank ? this.title.compareTo(thatTitle) : -1);
     }
 
    /* public int compareTo(Page target) {
