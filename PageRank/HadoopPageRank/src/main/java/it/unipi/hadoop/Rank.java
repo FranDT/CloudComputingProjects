@@ -168,7 +168,7 @@ public class Rank {
 
         // define I/O
         KeyValueTextInputFormat.addInputPath(job, new Path(input));
-        FileOutputFormat.setOutputPath(job, new Path(this.output + "/rank-" + iteration));
+        FileOutputFormat.setOutputPath(job, new Path(baseOutput + "/rank-" + iteration));
 
         // define input/output format
         job.setInputFormatClass(KeyValueTextInputFormat.class);
