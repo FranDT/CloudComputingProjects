@@ -9,6 +9,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
 
 
 import java.io.IOException;
@@ -25,7 +27,7 @@ public class Rank {
         return singleton;
     }
 
-    public static class RankMapper extends Mapper<Object, Text, Text, Node>{
+    public static class RankMapper extends Mapper<Text, Text, Text, Node>{
         private static final Text keyEmit = new Text();
         private static final Node nodeEmit = new Node();
 
@@ -48,9 +50,9 @@ public class Rank {
          * @throws IOException
          * @throws InterruptedException
          */
-        public void map(final Object key, final Text value, Context context) throws IOException, InterruptedException{
-            keyEmit.set(value.toString().split("\t")[0]);
-            nodeEmit.setByJson(value.toString().split("\t")[1]);
+        public void map(final Text key, final Text value, Context context) throws IOException, InterruptedException{
+            keyEmit.set(key.toString()/*.split("\t")[0]*/);
+            nodeEmit.setByJson(value.toString()/*.split("\t")[1]*/);
 
             mass = nodeEmit.getPageRank()/nodeEmit.getAdjacencyList().size();
 
@@ -107,7 +109,7 @@ public class Rank {
          */
         public void reduce(final Text key, final Iterable<Node> values, Context context) throws IOException, InterruptedException{
             rank = 0.0;
-
+                       
             for(Node n : values){
                 if(!n.getIsNode()) {
                     rank += n.getPageRank();
@@ -155,6 +157,8 @@ public class Rank {
         KeyValueTextInputFormat.addInputPath(job, new Path(input));
         FileOutputFormat.setOutputPath(job, new Path(outputDir + "/rank-" + iteration));
         
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
 
         return job.waitForCompletion(true);
     }
