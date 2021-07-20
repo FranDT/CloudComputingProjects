@@ -1,6 +1,7 @@
 package it.unipi.hadoop.hadoopobjects;
 
 import org.apache.hadoop.io.WritableComparable;
+import com.google.gson.Gson;
 
 import java.io.DataInput;
 import java.io.DataOutput;
