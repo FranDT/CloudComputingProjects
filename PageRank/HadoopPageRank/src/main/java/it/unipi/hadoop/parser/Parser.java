@@ -19,21 +19,15 @@ public class Parser {
         return null;
     }
 
-    public List<String> getOulinks(final String fileToSearch) {
+    public List<String> getOulinks(final String inputString) {
         List<String> outlinks = new LinkedList<String>();
 
-        try {
-            String[] arr;
-            arr = fileToSearch.split("\\[\\[");
-            for (int i = 0; i < arr.length; i++) {
-                if (arr[i].contains("]]")) {
-                    outlinks.add(arr[i].substring(0, arr[i].indexOf("]]")));
-                }
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        Pattern pattern = Pattern.compile("\\[\\[(.*?)\\]\\]");
+        this.matcher = pattern.matcher(inputString);
 
-        return new LinkedList<String>(outlinks);
+        while(matcher.find())
+            outlinks.add(matcher.group(1).replace("\t", ""));
+
+        return outlinks;
     }
 }
