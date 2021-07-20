@@ -1,3 +1,4 @@
+/*
 package it.unipi.hadoop.hadoopobjects;
 
 import org.apache.hadoop.io.WritableComparable;
@@ -82,5 +83,5 @@ public class Page implements WritableComparable<Page> {
         double rank = target.getPageRank();
         String title = target.getTitle();
         return this.getPageRank() < rank ? 1 : (this.getPageRank() == rank ? this.getTitle().compareTo(title) : -1);
-    }*/
-}
+    }
+}*/
