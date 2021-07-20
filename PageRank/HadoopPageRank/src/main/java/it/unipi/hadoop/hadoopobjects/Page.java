@@ -36,13 +36,11 @@ public class Page implements WritableComparable<Page> {
         return pageRank;
     }
 
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeUTF(title);
         out.writeDouble(pageRank);
     }
-    
-    @Override
+
     public void readFields(DataInput in) throws IOException {
         title = in.readUTF();
         pageRank = in.readDouble();
@@ -68,7 +66,6 @@ public class Page implements WritableComparable<Page> {
         return "Title:" + this.title + "\tRank:" + this.pageRank;
     }
 
-    @Override
     public int compareTo(Page o) {
         double mis = (this.pageRank - o.getPageRank());
         if(mis > 0 ){
