@@ -91,8 +91,6 @@ public class PageRankSpark {
 
         final long pageNumber = unique_nodes.count();
 
-        System.out.println("\n\n\n\n\n" + pageNumber);
-
         /*
             Getting the list of titles to which we match the initial mass. This is then joined with the unique_nodes RDD to
             have a single RDD to work from.
@@ -101,9 +99,6 @@ public class PageRankSpark {
 
         JavaPairRDD<String, Double> titles_and_masses = nodes_titles.mapToPair((PairFunction<String, String, Double>)
                 title -> new Tuple2<>(title, 1.0/pageNumber));
-
-        JavaPairRDD<String, Double> titles_and_masses0 = nodes_titles.mapToPair((PairFunction<String, String, Double>)
-                title -> new Tuple2<>(title, 0.0));
 
         /**
          *
@@ -119,24 +114,6 @@ public class PageRankSpark {
         for(int i = 0; i < NUM_ITER; i++){
 
             JavaPairRDD<String, Tuple2<Iterable<String>, Double>> complete_nodes = unique_nodes.join(titles_and_masses);
-            complete_nodes.saveAsTextFile(OUTPUT_PATH+"/"+i);
-            /*JavaRDD<Tuple2<Iterable<String>, Double>> outlink_nodes_with_mass = complete_nodes.values();
-
-            JavaPairRDD<String, Double> outlink_masses = outlink_nodes_with_mass.flatMapToPair((PairFlatMapFunction<Tuple2<Iterable<String>, Double>, String, Double>)
-                    myTuple -> {
-
-                List<Tuple2<String, Double>> ret = new ArrayList<>();
-                Double node_mass = myTuple._2();
-                List<String> outlinks_list = new ArrayList<>();
-                for(String outlink : myTuple._1()){
-                    outlinks_list.add(outlink);
-                }
-
-                if(!outlinks_list.isEmpty())
-                    for(String pageToOutput : outlinks_list)
-                        ret.add(new Tuple2<>(pageToOutput, node_mass/outlinks_list.size()));
-                        return ret.iterator();
-            });*/
 
             JavaPairRDD<String, Double> outlink_masses = complete_nodes.flatMapToPair((PairFlatMapFunction<Tuple2<String, Tuple2<Iterable<String>, Double>>, String, Double>)
                     myTuple -> {
@@ -173,7 +150,7 @@ public class PageRankSpark {
          */
 
         JavaPairRDD<String, Double> result = titles_and_masses.mapToPair(x -> x.swap()).sortByKey(false).mapToPair(x -> x.swap());
-        result.saveAsTextFile(OUTPUT_PATH+"/sort/");
+        result.saveAsTextFile(OUTPUT_PATH);
 
         sc.stop();
     }
