@@ -29,7 +29,7 @@ public class PageRankSpark {
         final SparkConf sparkConf = new SparkConf().setMaster("yarn").setAppName("PageRank");
         final JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
-        final JavaRDD<String> pages = sc.textFile(INPUT_PATH).cache();
+        final JavaRDD<String> pages = sc.textFile(INPUT_PATH);
 
         /**
          *
@@ -41,13 +41,12 @@ public class PageRankSpark {
          *
          */
         JavaPairRDD<String, Iterable<String>> all_nodes = pages.flatMapToPair((PairFlatMapFunction<String, String, Iterable<String>>) page -> {
-            System.out.println("\n\n\n\n\nProva 2");
-            String[] arr;
             String title = "";
             Matcher matcher;
-            List<String> outlinks = new LinkedList<>();
             List<Tuple2<String, Iterable<String>>> myRDD = new ArrayList<>();
             if (page != null) {
+                List<String> outlinks = new LinkedList<>();
+
                 Pattern pattern = Pattern.compile("<title.*?>(.*?)</title>");
                 matcher = pattern.matcher(page);
 
@@ -62,16 +61,16 @@ public class PageRankSpark {
                     String link = matcher.group(1).replace("\t", "");
                     if(!outlinks.contains(link)) {
                         outlinks.add(link);
-                        myRDD.add(new Tuple2<>(page, new ArrayList<>()));
+                        myRDD.add(new Tuple2<>(link, new ArrayList<>()));
                     }
                 }
+                myRDD.add(new Tuple2<>(page, outlinks));
             }
             return myRDD.iterator();
         });
 
         JavaPairRDD<String, Iterable<String>> unique_nodes = all_nodes.reduceByKey((Function2<Iterable<String>, Iterable<String>, Iterable<String>>) (outlinks1, outlinks2) -> {
-            System.out.println("\n\n\n\n\nProva 4");
-            List<String>  ret = new ArrayList<>();
+            List<String> ret = new ArrayList<>();
 
             for(String link : outlinks1){
                 ret.add(link);
@@ -92,16 +91,19 @@ public class PageRankSpark {
 
         final long pageNumber = unique_nodes.count();
 
-        System.out.println(pageNumber);
+        System.out.println("\n\n\n\n\n" + pageNumber);
 
         /*
             Getting the list of titles to which we match the initial mass. This is then joined with the unique_nodes RDD to
             have a single RDD to work from.
         */
-        JavaRDD<String> nodes_titles = unique_nodes.keys().cache();
+        JavaRDD<String> nodes_titles = unique_nodes.keys();
 
         JavaPairRDD<String, Double> titles_and_masses = nodes_titles.mapToPair((PairFunction<String, String, Double>)
                 title -> new Tuple2<>(title, 1.0/pageNumber));
+
+        JavaPairRDD<String, Double> titles_and_masses0 = nodes_titles.mapToPair((PairFunction<String, String, Double>)
+                title -> new Tuple2<>(title, 0.0));
 
         /**
          *
@@ -118,7 +120,7 @@ public class PageRankSpark {
 
             JavaPairRDD<String, Tuple2<Iterable<String>, Double>> complete_nodes = unique_nodes.join(titles_and_masses);
             complete_nodes.saveAsTextFile(OUTPUT_PATH+"/"+i);
-            JavaRDD<Tuple2<Iterable<String>, Double>> outlink_nodes_with_mass = complete_nodes.values();
+            /*JavaRDD<Tuple2<Iterable<String>, Double>> outlink_nodes_with_mass = complete_nodes.values();
 
             JavaPairRDD<String, Double> outlink_masses = outlink_nodes_with_mass.flatMapToPair((PairFlatMapFunction<Tuple2<Iterable<String>, Double>, String, Double>)
                     myTuple -> {
@@ -130,13 +132,30 @@ public class PageRankSpark {
                     outlinks_list.add(outlink);
                 }
 
-                if(outlinks_list.isEmpty())
-                    return ret.iterator();
-                else{
+                if(!outlinks_list.isEmpty())
                     for(String pageToOutput : outlinks_list)
                         ret.add(new Tuple2<>(pageToOutput, node_mass/outlinks_list.size()));
-                }
-                return ret.iterator();
+                        return ret.iterator();
+            });*/
+
+            JavaPairRDD<String, Double> outlink_masses = complete_nodes.flatMapToPair((PairFlatMapFunction<Tuple2<String, Tuple2<Iterable<String>, Double>>, String, Double>)
+                    myTuple -> {
+
+                    List<Tuple2<String, Double>> ret = new ArrayList<>();
+                    Tuple2<Iterable<String>, Double> outlinks_and_masses = myTuple._2();
+                    Double rank = outlinks_and_masses._2();
+                    List<String> outlinks = new ArrayList<>();
+                    for(String outlink : outlinks_and_masses._1()){
+                        outlinks.add(outlink);
+                    }
+
+                    ret.add(new Tuple2<>(myTuple._1(), 0.0));
+
+                    if(!outlinks.isEmpty())
+                        for(String pageToOutput : outlinks)
+                            ret.add(new Tuple2<>(pageToOutput, rank/outlinks.size()));
+
+                    return ret.iterator();
             });
 
             JavaPairRDD<String, Double> outlink_total_values = outlink_masses.reduceByKey((Function2<Double, Double, Double>)
