@@ -64,7 +64,7 @@ public class PageRankSpark {
                         myRDD.add(new Tuple2<>(link, new ArrayList<>()));
                     }
                 }
-                myRDD.add(new Tuple2<>(page, outlinks));
+                myRDD.add(new Tuple2<>(title, outlinks));
             }
             return myRDD.iterator();
         });
