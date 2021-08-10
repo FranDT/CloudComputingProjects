@@ -10,6 +10,7 @@ Major details can be found in the documentation.
 
 ## System Architecture
 The application is composed by two layers: a frontend layer and a backend layer, that interacts through a load balancer, like in the following picture:
+
 <img width="723" alt="Screen Shot 2021-08-10 at 21 53 28" src="https://user-images.githubusercontent.com/41535744/128926048-837f49bf-b8d1-4c88-b1ef-99af17dc1f95.png">
 
 ## Implementation
