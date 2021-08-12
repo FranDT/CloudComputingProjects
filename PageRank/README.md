@@ -1,5 +1,5 @@
 # MapReduce PageRank
-We have implemented two different version of PageRank algorithm exploiting Hadoop and Spark. The Spark version is implemented both in Java and Python. The Hadoop version is implemented using Java.
+We have implemented two different version of the PageRank algorithm exploiting Hadoop and Spark.
 
 In the following sections, you will have a simple guide on the project implementation. Major details can be found in the documentation.
 
@@ -27,4 +27,37 @@ hadoop jar <jarPath> it.unipi.hadoop.Main <inputFile> <outputPath> <numIteration
 To check the result, from the namenode we need to run the following command:
 ```
 hadoop fs -cat <outputPath>/sort/part-r-00000
+```
+
+## Spark
+In this section, we want to show the implementation of the PageRank algorithm through Spark. In particular, we’ve used Python and Java for our implementation.
+
+### Design of the algorithm in Python
+In the following picture, we can see the DAG for the Python implementation of PageRank
+through Spark, in which we show three iterations of PageRank (one is performed in the node initialization phase):
+
+<img width="860" alt="Screen Shot 2021-08-12 at 11 01 01" src="https://user-images.githubusercontent.com/41535744/129169404-333845a7-602a-4299-ae85-d8bc77af4cb8.png">
+
+* Count phase: We count the elements, obtaining our number of pages N.
+* Node initialization phase: we append the initial rank equal to 1/N during the map phase to each page; after that, we calculate the contribution of each page and we obtain the sum of the contribution for each page, that is finally used to obtain, for each page, the new rank.
+* Rank phase: we take the result of the previous iteration and calculate the new ranks.
+* Sort phase: we use the sortBy transformation to obtain an RDD that is sorted by value, that corresponds to the rank.
+
+### Design of the algorithm in Java
+In the following picture, we’ve reported the DAG of the Java implementation, in which we show just two iterations of the PageRank algorithm:
+
+<img width="731" alt="Screen Shot 2021-08-12 at 12 16 53" src="https://user-images.githubusercontent.com/41535744/129180435-546d8a7e-cecd-40f3-bf00-acdf3c07cc7f.png">
+
+* Parse + Count phase: we perform both the parse and the count at the same time. The final RDD contains the title of each page and its initial rank equal to 1/N.
+* Rank phase: we calculate, for each page, its new rank, that is then used in the following iteration.
+* Sort phase: We perform the sorting.
+
+### Spark execution
+To execute the Spark code, we need to have the /SparkPageRank/pagerank.py file on the namenode. Once the file is on the namenode and we performed the access to the namenode itself, we just need to run the following command:
+```
+spark-submit <inputFile> <outputPath> <alpha> <numIteration>
+```
+To check the result, from the namenode we need to run the following command:
+```
+hadoop fs -cat <outputPath>/part-00000
 ```
