@@ -10,7 +10,7 @@ The following picture represents the sequence of phases that the input file has 
 
 * Count phase: during the count phase, we retrieve the number of pages.
 * Parse phase: we initialize all the Nodes, with an initial rank equal to 1 divided by our computed number of pages.
-* Rank Phase: the aim of this phase is to take, for each node, the rank calculated in the previous phase and to divide this rank by the number of outlinks, so that we can represent the contribution of the page with respect to each outlink
+* Rank Phase: the aim of this phase is to take, for each node, the rank calculated in the previous phase and to divide this rank by the number of outlinks, so that we can represent the contribution of the page with respect to each outlink.
 * Sort phase: during the last phase, we perform the sorting.
 
 ### Hadoop Execution
@@ -33,8 +33,7 @@ hadoop fs -cat <outputPath>/sort/part-r-00000
 In this section, we want to show the implementation of the PageRank algorithm through Spark. In particular, we’ve used Python and Java for our implementation.
 
 ### Design of the algorithm in Python
-In the following picture, we can see the DAG for the Python implementation of PageRank
-through Spark, in which we show three iterations of PageRank (one is performed in the node initialization phase):
+In the following picture, we can see the DAG for the Python implementation of PageRank through Spark:
 
 <img width="860" alt="Screen Shot 2021-08-12 at 11 01 01" src="https://user-images.githubusercontent.com/41535744/129169404-333845a7-602a-4299-ae85-d8bc77af4cb8.png">
 
@@ -44,7 +43,7 @@ through Spark, in which we show three iterations of PageRank (one is performed i
 * Sort phase: we use the sortBy transformation to obtain an RDD that is sorted by value, that corresponds to the rank.
 
 ### Design of the algorithm in Java
-In the following picture, we’ve reported the DAG of the Java implementation, in which we show just two iterations of the PageRank algorithm:
+In the following picture, we’ve reported the DAG of the Java implementation:
 
 <img width="731" alt="Screen Shot 2021-08-12 at 12 16 53" src="https://user-images.githubusercontent.com/41535744/129180435-546d8a7e-cecd-40f3-bf00-acdf3c07cc7f.png">
 
